@@ -1,0 +1,7 @@
+﻿services:
+  capitalpulse:
+    image: capitalpulse
+    build:
+      context: .
+      dockerfile: CapitalPulse/Dockerfile
+
