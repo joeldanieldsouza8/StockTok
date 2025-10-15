@@ -1,6 +1,0 @@
-@CapitalPulse_HostAddress = http://localhost:5266
-
-GET {{CapitalPulse_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
