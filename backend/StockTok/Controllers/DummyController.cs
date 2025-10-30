@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CapitalPulse.Controllers;
+namespace StockTok.Controllers;
 
 [Authorize]
 [ApiController]

@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^4.10.0",
+    "@auth0/nextjs-auth0": "^4.11.0",
     "next": "15.5.5",
     "react": "19.1.0",
     "react-dom": "19.1.0"
