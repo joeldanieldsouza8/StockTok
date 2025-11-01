@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapitalPulse", "CapitalPulse\CapitalPulse.csproj", "{9B3B1F4E-374F-4790-A634-AFDEC489DC0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTok", "StockTok\StockTok.csproj", "{9B3B1F4E-374F-4790-A634-AFDEC489DC0B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AF693CF-35F7-46DD-B73C-D4ED77E2ABC4}"
 	ProjectSection(SolutionItems) = preProject
