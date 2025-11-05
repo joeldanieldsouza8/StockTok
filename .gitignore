@@ -1,6 +1,16 @@
+# .NET
 bin/
 obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
+*.user
+# Python
+**/__pycache__/
+**/venv/
+**/.env
+
+# Frontend
+**/node_modules/
+**/dist/
