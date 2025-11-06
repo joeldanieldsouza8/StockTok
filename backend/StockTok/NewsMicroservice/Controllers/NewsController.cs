@@ -11,6 +11,8 @@ namespace StockTok.NewsMicroservice.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class NewsController : ControllerBase
+
+        // instantiating service
     {
         private readonly NewsAPIFetcher _newsAPIFetcher;
         public NewsController(NewsAPIFetcher newsAPIFetcher)
@@ -18,6 +20,7 @@ namespace StockTok.NewsMicroservice.Controllers
             _newsAPIFetcher = newsAPIFetcher;
         }
 
+        // Get controller to fetch response from API (assume we are calling from API database instead)
         [HttpGet]
         public async Task<IActionResult> Get()
         {

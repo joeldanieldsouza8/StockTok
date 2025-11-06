@@ -29,11 +29,14 @@ public class Program
             endpoints.MapControllers();
         });
 
-        app.MapGet("/", () => "Hello World, From Zayaan!");
+        // this will display on backend URL
+        app.MapGet("/", () => "Hello World!");
 
         var fetcher = app.Services.GetRequiredService<NewsAPIFetcher>();
         var result = await fetcher.GetAPIResponse();
 
+
+        // API call output will be shown in console
         Console.WriteLine("\n\n");
 
         foreach (var item in result)

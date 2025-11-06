@@ -22,7 +22,7 @@ namespace NewsMicroservice.Models
         [JsonPropertyName("entities")]
         public List<TempEntity>? EntitiesRaw { get; set; }
 
-        // Flattened arrays of all entity data
+        // Flattened arrays of all entity data as e.g. symbols is inside nested structure called "data" in JSON
         [JsonIgnore]
         public string[] Symbols => EntitiesRaw?.Select(e => e.Symbol).ToArray() ?? Array.Empty<string>();
 
@@ -35,6 +35,7 @@ namespace NewsMicroservice.Models
         [JsonIgnore]
         public string[] Industries => EntitiesRaw?.Select(e => e.Industry).ToArray() ?? Array.Empty<string>();
 
+        // class is for creating collection using List of objects for each of these entities (to match API response)
         public class TempEntity
         {
             [JsonPropertyName("symbol")]
