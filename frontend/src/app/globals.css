@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --muted: #6b7280; /* gray-500 */
+  --primary: #2563eb; /* blue-600 */
+  --primary-600: #1d4ed8; /* blue-700 */
 }
 
 @theme inline {
@@ -12,15 +15,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Force a consistent white theme for this project. If you later want dark mode,
+   re-enable prefers-color-scheme rules and provide matching variables. */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* small utility classes used by components for subtle styling */
+.text-muted { color: var(--muted); }
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-primary:hover { background-color: var(--primary-600); }
