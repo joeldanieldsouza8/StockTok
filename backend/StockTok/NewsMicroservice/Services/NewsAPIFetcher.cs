@@ -28,10 +28,12 @@ namespace StockTok.NewsMicroservice.Services
             _httpClient = httpClient;
             _settings = options.Value;
 
-
+            // this is the base url for API set in appsettings.json
             _httpClient.BaseAddress = new Uri(_settings.BaseUrl);
+
             _httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
+            
             _httpClient.DefaultRequestHeaders.Authorization =
                new AuthenticationHeaderValue("Token", _settings.ApiKey);
         }
@@ -39,6 +41,7 @@ namespace StockTok.NewsMicroservice.Services
 
         public async Task<IEnumerable<NewsModel>> GetAPIResponse()
         {
+            // specifying string query parameters
             var response = await _httpClient.GetAsync($"/v1/news/all?symbols=NVDA%2CAAPL&filter_entities=true&language=en&api_token={_settings.ApiKey}");
 
             if (response.IsSuccessStatusCode)
@@ -52,7 +55,7 @@ namespace StockTok.NewsMicroservice.Services
                     PropertyNameCaseInsensitive = true
                 };
 
-                var result = JsonSerializer.Deserialize<NewsAPIWrapper>(json, options);
+                var result = JsonSerializer.Deserialize<NewsAPIWrapper>(json, options); // deserializer
                 return result?.Data ?? new List<NewsModel>();
             }
 

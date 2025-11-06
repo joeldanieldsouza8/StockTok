@@ -15,12 +15,12 @@ namespace NewsMicroservice.DBContexts
         public NewsContext(DbContextOptions<NewsContext> options) : base(options)
         {
 
-        }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
         {
 
+            // WebApiDatabase contains connection string to the database inside appsettings.json
             optionsBuilder.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase"));
 
         }
