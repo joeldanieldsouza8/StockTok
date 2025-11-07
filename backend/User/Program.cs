@@ -1,7 +1,4 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using User.Data;
 
 namespace User;
@@ -32,18 +29,6 @@ public class Program
         services.AddScoped<Services.UserService>();
         
         services.AddControllers();
-        
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Authority = configuration["Auth0:Authority"];
-                options.Audience = configuration["Auth0:Audience"];
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    NameClaimType = ClaimTypes.NameIdentifier
-                };
-            });
         
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
