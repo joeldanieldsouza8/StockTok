@@ -1,62 +1,58 @@
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace StockTok;
+namespace ApiGateway;
 
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
         ConfigureServices(builder);
-
+        
         var app = builder.Build();
-
+        
         ConfigureMiddleware(app);
-
+        
         app.Run();
     }
-
+    
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
-
-        // Add controllers
-        services.AddControllers();
-
-        var domain = $"https://{configuration["Auth0:Domain"]}/";
-        var audience = configuration["Auth0:Audience"];
-
-        // Configure JWT Bearer authentication
+        
+        // [TODO] Use Ocelot or YARP, and add the necessary configurations here.
+        
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = domain;
-                options.Audience = audience;
+                options.Authority = configuration["Auth0:Authority"];
+                options.Audience = configuration["Auth0:Audience"];
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // ValidAudiences = [audience],
                     NameClaimType = ClaimTypes.NameIdentifier
                 };
             });
     }
-
+    
     private static void ConfigureMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
-
+            
         }
-
-        // app.UseHttpsRedirection(); // TODO: IMPORTANT: Uncomment when in production
-
+        
+        // app.UseHttpsRedirection();
+        
+        // The order of these is critical
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
         app.MapControllers();
     }
 }
