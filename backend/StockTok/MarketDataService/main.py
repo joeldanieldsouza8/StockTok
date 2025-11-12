@@ -9,4 +9,4 @@ async def ticker_detail(ticker: str):
     data = yf.Ticker(ticker)
     info = {"info": data.info}
     return info
-    
+
