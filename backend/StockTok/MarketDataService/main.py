@@ -42,7 +42,6 @@ class TickerFundamentalData(BaseModel):
     marketData: MarketData
     capitalStructure: CapitalStructure
     valuation: Valuation
-    # <--- FIX 2: Added Efficiency and Growth to the main blueprint ---
     efficiency: Efficiency
     growth: Growth
 
@@ -61,30 +60,26 @@ async def ticker_detail(ticker: str):
 
 #Endpoint 1: For the fundamental data : 
 @app.get("/api/market/ticker/{ticker}/fundamentals", response_model=TickerFundamentalData)
-# <--- FIX 1: Changed 'Ticker' (uppercase) to 'ticker' (lowercase) ---
+
 async def get_ticker_fundamentals(ticker :str): 
     """ 
     Fetches fundamental data for the ticker
     """
     
-    # --- THIS IS THE NEW FIX ---
-    # Clean the input ticker to remove whitespace (like %20) and make it uppercase
     ticker = ticker.strip().upper()
-    # --------------------------
 
-    # This print statement will now work correctly
     print (f"Looking up fundamental data for: {ticker}")
     try : 
-        # This will now use the correct 'ticker' variable
+
         data = yf.Ticker(ticker)
         info = data.info 
 
         #check if we got data
-        # This will also use the correct 'ticker' variable
+
         if not info or info.get('quoteType') == 'NONE' or not info.get('marketCap'):
             raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
 
- # --- Perform Calculations (like we discussed) ---
+ #  Perform  the necessary Calculations 
         net_debt = None
         net_debt_to_ebitda = None
         
@@ -102,7 +97,7 @@ async def get_ticker_fundamentals(ticker :str):
             companyName=get_safe(info, 'longName'),
             
             marketData=MarketData(
-                **{ # The ** unpacks this dict into the Pydantic model
+                **{ 
                     "52 Week High": get_safe(info, 'fiftyTwoWeekHigh'),
                     "52 Week Low": get_safe(info, 'fiftyTwoWeekLow'),
                     "Avg. 3 Month Volume": get_safe(info, 'averageDailyVolume3Month'),
@@ -133,7 +128,7 @@ async def get_ticker_fundamentals(ticker :str):
                     "LTM EPS Growth": get_safe(info, 'earningsGrowth')
                 }
             )
-            # <--- FIX 3: Added the missing comma here ---
+            
             ,
 
             valuation=Valuation(
