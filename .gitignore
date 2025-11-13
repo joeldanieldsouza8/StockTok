@@ -8,6 +8,7 @@ riderModule.iml
 *.user
 # Python
 **/__pycache__/
+**/.vscode/
 **/venv/
 **/.env
 
