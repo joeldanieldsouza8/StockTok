@@ -98,7 +98,7 @@ async def get_ticker_fundamentals(ticker: str):
             longBusinessSummary=get_safe(info, 'longBusinessSummary'),
             sector=get_safe(info, 'sector'),
             industry=get_safe(info, 'industry'),
-            fullTimeEmployees=get_safe(info, 'fullTimeEmployees'),
+
             trailingAnnualDividendRate=get_safe(info, 'trailingAnnualDividendRate'),
             exDividendDate=get_safe(info, 'exDividendDate'),
             
