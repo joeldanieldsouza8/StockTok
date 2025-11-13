@@ -3,6 +3,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field #tools to create a strict template for the JSON data
 from typing import Optional, Any #typing helpers . Optional means it can be the var specified or zero. 
 
+from services.utility import change_labels
+
 app = FastAPI()
 
 #1.Pydantic models : 
@@ -51,17 +53,9 @@ def get_safe(data: dict, key: str) -> Optional[Any]:
 
 # 2.The API Endpoints : 
 
-@app.get("/api/market/ticker/{ticker}/")
-async def ticker_detail(ticker: str):
-    print(f"Looking up: {ticker}")
-    data = yf.Ticker(ticker)
-    info = {"info": data.info}
-    return info
-
 #Endpoint 1: For the fundamental data : 
 @app.get("/api/market/ticker/{ticker}/fundamentals", response_model=TickerFundamentalData)
-
-async def get_ticker_fundamentals(ticker :str): 
+async def get_ticker_fundamentals(ticker: str): 
     """ 
     Fetches fundamental data for the ticker
     """
@@ -70,7 +64,6 @@ async def get_ticker_fundamentals(ticker :str):
 
     print (f"Looking up fundamental data for: {ticker}")
     try : 
-
         data = yf.Ticker(ticker)
         info = data.info 
 
@@ -127,9 +120,9 @@ async def get_ticker_fundamentals(ticker :str):
                     "LTM Rev. Growth": get_safe(info, 'revenueGrowth'),
                     "LTM EPS Growth": get_safe(info, 'earningsGrowth')
                 }
-            )
+            ),
             
-            ,
+            
 
             valuation=Valuation(
                 **{
@@ -150,3 +143,60 @@ async def get_ticker_fundamentals(ticker :str):
     except Exception as e:
         # Catch any other unexpected errors
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+ 
+    
+# Endpoint 2: Single Ticker price data:
+@app.get("/api/market/ticker_price/{ticker}/")
+async def ticker_price(ticker: str):
+    try:
+        print(f"Looking up: {ticker}")
+        symbol = yf.Ticker(ticker)
+        data = symbol.history(period='1d')
+        if not data.empty:
+            current_price = data['Close'][0]
+            return round(current_price, 2)
+        else:
+            raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
+    except HTTPException as e:
+        # Re-raise HTTP exceptions directly
+        raise e
+    except Exception as e:
+        # Catch any other unexpected errors
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+
+
+# Endpoint 2: return ohlc data in json format:
+@app.get("/api/market/history/{ticker}/{earliest_date}")
+async def ticker_history(ticker: str, earliest_date: int):
+    
+    try:        
+        symbol = yf.Ticker(ticker)
+        new_early_date = earliest_date - 2592000 # ~1 month in epoch time
+        data = symbol.history(start=new_early_date, end=earliest_date, interval='1d') # end is not inclusive
+        if data.empty:
+            raise HTTPException(status_code=404, detail=f"data for {ticker} is not found, is empty, or no data available.")
+
+        return change_labels(data)
+        
+    
+    except HTTPException as e:
+        # Re-raise HTTP exceptions directly
+        raise e
+    except Exception as e:
+        # Catch any other unexpected errors
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+    
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
