@@ -16,3 +16,5 @@ riderModule.iml
 **/dist/
 backend/User/appsettings.json
 backend\User\appsettings.json
+backend\News\appsettings.json
+backend/News/appsettings.json
