@@ -165,7 +165,7 @@ async def ticker_price(ticker: str):
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 
-# Endpoint 2: return ohlc data in json format:
+# Endpoint 3: return ohlc data in json format:
 @app.get("/api/market/history/{ticker}/{earliest_date}")
 async def ticker_history(ticker: str, earliest_date: int):
     
