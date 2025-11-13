@@ -41,11 +41,17 @@ class Valuation(BaseModel):
 # This class defines the exact final structure of the JSON that will be sent to the frontend.
 class TickerFundamentalData(BaseModel):
     companyName: Optional[str]
+
     marketData: MarketData
     capitalStructure: CapitalStructure
     valuation: Valuation
     efficiency: Efficiency
     growth: Growth
+    longBusinessSummary: Optional[str]
+    sector: Optional[str]
+    industry: Optional[str]
+    trailingAnnualDividendRate: Optional[float]
+    exDividendDate: Optional[int] # This is a timestamp
 
 #Helper function ot safely get data from info dict 
 def get_safe(data: dict, key: str) -> Optional[Any]:
@@ -88,6 +94,13 @@ async def get_ticker_fundamentals(ticker: str):
         # Build the clean response object 
         fundamentals = TickerFundamentalData(
             companyName=get_safe(info, 'longName'),
+            
+            longBusinessSummary=get_safe(info, 'longBusinessSummary'),
+            sector=get_safe(info, 'sector'),
+            industry=get_safe(info, 'industry'),
+            fullTimeEmployees=get_safe(info, 'fullTimeEmployees'),
+            trailingAnnualDividendRate=get_safe(info, 'trailingAnnualDividendRate'),
+            exDividendDate=get_safe(info, 'exDividendDate'),
             
             marketData=MarketData(
                 **{ 
