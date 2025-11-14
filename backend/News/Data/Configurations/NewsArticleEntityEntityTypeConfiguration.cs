@@ -11,7 +11,7 @@ public class NewsArticleEntityEntityTypeConfiguration : IEntityTypeConfiguration
         builder.ToTable("NewsArticleEntities");
         
         // Primary key
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.ID);
         
         builder.Property(e => e.Symbol).IsRequired();
         builder.Property(e => e.Name).IsRequired();
