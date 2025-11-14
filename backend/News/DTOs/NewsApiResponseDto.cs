@@ -43,13 +43,13 @@ public class NewsApiResponseDto
         /// <summary>
         /// Coordinated Universal Time (UTC) timestamp indicating when the article was published.
         /// </summary>
-        public DateTime PublishedAt { get; set; }
+        public DateTime Published_At { get; set; }
 
         /// <summary>
         /// List of financial entities (like companies or stocks) associated with the news article.
         /// </summary>
         /// <seealso cref="NewsArticleEntityDto"/>
-        public List<NewsArticleEntityDto> NewsArticleEntities { get; set; } = [];
+        public List<NewsArticleEntityDto> Entities { get; set; } = [];
     }
     
     /// <summary>
