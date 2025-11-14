@@ -8,7 +8,7 @@ public class NewsArticleEntity
     /// <summary>
     /// The unique primary key for this entity.
     /// </summary>
-    public Guid Id { get; set; }
+    public Guid ID { get; set; }
     
     /// <summary>
     /// Stock ticker symbol for the entity.
@@ -42,9 +42,13 @@ public class NewsArticleEntity
     /// </example>
     public string Industry { get; set; }
 
-    // Foreign key property
-    public Guid NewsArticleId { get; set; }
-        
-    // Navigation property back to the parent NewsArticle
+    /// <summary>
+    /// Foreign key property
+    /// </summary>
+    public string ArticleID { get; set; }
+
+    /// <summary>
+    /// Navigation property back to the parent NewsArticle
+    /// </summary>
     public NewsArticle NewsArticle { get; set; } = new();
 }
