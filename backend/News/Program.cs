@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using News.DBContexts;
@@ -44,7 +43,13 @@ public class Program
             // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); // TODO: This may be optional if the data returned (i.e., the data will be consumed) is already in JSON format.
         });
         
-        services.AddControllers();
+        // Prevent circular referencing
+        services.AddControllers()
+            .AddJsonOptions(options =>
+             {
+                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                 options.JsonSerializerOptions.WriteIndented = true;
+             });
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
