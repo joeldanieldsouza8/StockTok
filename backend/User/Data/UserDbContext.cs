@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using User.Data.Configurations;
 
@@ -14,8 +13,6 @@ public class UserDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        // new UserEntityTypeConfiguration().Configure(modelBuilder.Entity<Models.User>());
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        new UserEntityTypeConfiguration().Configure(modelBuilder.Entity<Models.User>());
     }
 }
