@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace News.Models;
 
 /// <summary>
@@ -8,6 +10,7 @@ public class NewsArticle
     /// <summary>
     /// Unique identifier for the article, as provided by the Marketaux API.
     /// </summary>
+    [Key]
     public string Uuid { get; set; } 
     
     /// <summary>
@@ -24,7 +27,7 @@ public class NewsArticle
     /// Direct URL to the full news article on the source's website.
     /// </summary>
     public string Url { get; set; }
-    
+
     /// <summary>
     /// Two-letter language code in which the article is written in.
     /// </summary>
@@ -38,6 +41,8 @@ public class NewsArticle
     /// </summary>
     public DateTime PublishedAt { get; set; }
 
-    // Navigation property for the one-to-many relationship
+    /// <summary>
+    /// Navigation property for the one-to-many relationship
+    /// </summary>
     public ICollection<NewsArticleEntity> NewsArticleEntities { get; set; } = new List<NewsArticleEntity>();
 }
