@@ -6,6 +6,7 @@ riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
 *.user
+
 # Python
 **/__pycache__/
 **/venv/
@@ -14,8 +15,14 @@ riderModule.iml
 # Frontend
 **/node_modules/
 **/dist/
+
+# Backend
 backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
 .env
+
+# Backend (For Mac)
+.DS_Store
+backend/.DS_Store
