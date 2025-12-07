@@ -178,6 +178,39 @@ async def ticker_price(ticker: str):
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
 
+# Endpoint: Fetch standard history for frontend chart 
+
+@app.get("/api/market/ticker/{ticker}/history/")
+async def ticker_history_standard(
+    ticker: str, 
+    period: str = "1y", 
+    interval: str = "1d"
+):
+    """
+    Fetches historical price data for a given stock ticker.
+    Used by the frontend StockChart.
+    """
+    print(f"Looking up historical data for: {ticker}")
+    try:
+        ticker = ticker.strip().upper()
+        stock = yf.Ticker(ticker)
+        
+        # Fetch history
+        hist_data = stock.history(period=period, interval=interval)
+        
+        if hist_data.empty:
+            raise HTTPException(status_code=404, detail=f"No history data found for {ticker}.")
+        
+        # Convert to list of dictionaries
+        hist_data = hist_data.reset_index()
+        hist_list = hist_data.to_dict(orient="records")
+        
+        return {"ticker": ticker, "history": hist_list}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching history: {str(e)}")
+
+
+
 # Endpoint 3: return ohlc data in json format after changing labels:
 @app.get("/api/market/history/{ticker}/{earliest_date}")
 async def ticker_history(ticker: str, earliest_date: int):
@@ -199,17 +232,3 @@ async def ticker_history(ticker: str, earliest_date: int):
         # Catch any other unexpected errors
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
     
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
