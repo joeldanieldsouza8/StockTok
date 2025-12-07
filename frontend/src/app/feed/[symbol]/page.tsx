@@ -23,7 +23,7 @@ export default async function FeedPage({ params }: FeedPageProps) {
             </TabsContent>
             
             <TabsContent value="news">
-                <NewsTab symbol={symbol} />
+                <NewsTab symbol={upperSymbol} />
             </TabsContent>
         </Tabs>
     )
