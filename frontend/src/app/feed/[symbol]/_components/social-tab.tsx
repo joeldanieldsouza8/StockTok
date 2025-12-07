@@ -19,7 +19,7 @@ interface Post {
     content: string;
 }
 
-export default function TabsDemo() {
+export default function PostTab() {
   // STATE: for posts
   const [posts, setPosts] = useState<Post[]>([
     { id: 101, title: "Initial Post", tag: "General", content: "This is a placeholder post in the social feed." },
@@ -122,10 +122,6 @@ export default function TabsDemo() {
       )}
 
       <Tabs defaultValue="account">
-        <TabsList>
-          <TabsTrigger value="account">Social</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-        </TabsList>
         
         {/* 5. The "Social" container now displays the posts */}
         <TabsContent value="account">
@@ -153,35 +149,6 @@ export default function TabsDemo() {
             </CardContent>
             <CardFooter>
               <Button>Load More</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-
-
-
-
-        <TabsContent value="password">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you&apos;ll be logged
-                out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="tabs-demo-current">Current password</Label>
-                <Input id="tabs-demo-current" type="password" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="tabs-demo-new">New password</Label>
-                <Input id="tabs-demo-new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
             </CardFooter>
           </Card>
         </TabsContent>
