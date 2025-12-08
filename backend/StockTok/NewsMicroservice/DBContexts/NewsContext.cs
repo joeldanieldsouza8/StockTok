@@ -13,7 +13,7 @@ namespace NewsMicroservice.DBContexts
         }
 
         public NewsContext(DbContextOptions<NewsContext> options) : base(options)
-        {
+        { }
 
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
