@@ -1,10 +1,23 @@
+# .NET
 bin/
 obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
-D:\Zayaan\D_git\StockTok\backend\StockTok\appsettings.json
-D:\Zayaan\D_git\StockTok\backend\StockTok\appsettings.Development.json
 .vs/
-backend/.vs/
+*.user
+# Python
+**/__pycache__/
+**/venv/
+**/.env
+
+# Frontend
+**/node_modules/
+**/dist/
+backend/User/appsettings.json
+backend\User\appsettings.json
+backend\News\appsettings.json
+backend/News/appsettings.json
+backend/StockTok/appsettings.json
+backend/StockTok/appsettings.Development.json
