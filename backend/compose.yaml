@@ -1,7 +1,0 @@
-﻿services:
-  stocktok:
-    image: stocktok
-    build:
-      context: .
-      dockerfile: StockTok/Dockerfile
-
