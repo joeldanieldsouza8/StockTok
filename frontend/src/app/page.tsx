@@ -11,7 +11,7 @@ export default async function HomePage() {
     return (
       <main>
         <h2>Please log in to continue.</h2>
-        <a href="/auth/login">
+        <a href="/auth/login?returnTo=/onboarding">
           <button>Log in</button>
         </a>
       </main>
