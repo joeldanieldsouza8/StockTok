@@ -27,7 +27,7 @@ public class Program
         var configuration = builder.Configuration;
         
         services.AddDbContext<NewsContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("NewsDatabase")));
+            options.UseNpgsql(configuration.GetConnectionString("WebApiDatabase")));
         
         // Bind the "NewsApi" section from the 'appsettings.json' to the 'NewsApiSettings' class
         services.AddOptions<NewsApiSettings>()

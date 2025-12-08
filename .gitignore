@@ -21,3 +21,5 @@ backend\News\appsettings.json
 backend/News/appsettings.json
 backend/StockTok/appsettings.json
 backend/StockTok/appsettings.Development.json
+.vs
+backend/News/Migrations/
