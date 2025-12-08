@@ -1,0 +1,15 @@
+services:
+  user-db:
+    # image: postgres:latest # Linux OS + PostgreSQL (latest version)
+    image: joeldsouza8/user-db-seeded:v1
+    
+    container_name: user-db-container # Name of the Docker Container
+    
+    environment:
+      POSTGRES_USER: replace
+      POSTGRES_PASSWORD: replace
+      POSTGRES_DB: replace # Name of the Postgres database
+    
+    ports:
+      - "5432:5432" # Map the host port to the port of the Docker Container
+      
