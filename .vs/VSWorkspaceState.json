@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\backend",
-    "\\backend\\Social"
+    "\\backend"
   ],
-  "SelectedNode": "\\backend\\User",
+  "SelectedNode": "\\compose.yaml",
   "PreviewInSolutionExplorer": false
 }
