@@ -39,4 +39,6 @@ public class User
     /// The UTC timestamp when the user account was last updated.
     /// </summary>
     public DateTimeOffset UpdatedAt { get; set; }
+    
+    public ICollection<Watchlist> Watchlists { get; set; } = new List<Watchlist>();
 }
