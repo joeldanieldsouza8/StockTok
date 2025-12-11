@@ -3,8 +3,13 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
-export function HeroSection() {
+interface HeroSectionProps {
+  isLoggedIn: boolean
+}
+
+export function HeroSection({ isLoggedIn }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden">
       {/* Background Image - User will add this later */}
@@ -35,10 +40,21 @@ export function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
-            <Button size="lg" className="text-base group">
-              Get Started
-              <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            {isLoggedIn ? (
+              <Link href="/dashboard">
+                <Button size="lg" className="text-base group">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/auth/login?returnTo=/onboarding">
+                <Button size="lg" className="text-base group">
+                  Get Started
+                  <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            )}
             <Button size="lg" variant="outline" className="text-base bg-transparent">
               Explore Markets
             </Button>
