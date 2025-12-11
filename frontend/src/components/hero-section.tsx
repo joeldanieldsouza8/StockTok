@@ -9,8 +9,8 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden">
       {/* Background Image - User will add this later */}
       <div className="absolute inset-0 z-0">
-        <img src="/modern-dark-abstract-trading-background.jpg" alt="Hero background" className="w-full h-full object-cover opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
+        <img src="/modern-dark-abstract-trading-background.png" alt="Hero background" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/40 to-background" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
