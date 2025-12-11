@@ -154,6 +154,16 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 | DELETE | `/api/users/{id}` | Delete user |
 | POST | `/api/users/login` | Handle login (sync/create user) |
 
+### Frontend Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage with market overview and features |
+| `/health` | Health check page - displays session info and API tester |
+| `/onboarding` | User onboarding flow after Auth0 login |
+| `/auth/login` | Auth0 login redirect |
+| `/auth/logout` | Auth0 logout redirect |
+
 ---
 
 ## Authentication Flow
@@ -178,11 +188,23 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 
 - [ ] **Remove verbose logging in .NET services** - Clean up console output for production
 
-- [ ] **Add health check endpoints** - For container orchestration
+- [x] **Add health check page** - `/health` page for session and API testing
 
 - [ ] **Add CI/CD pipeline** - Automated testing and deployment
 
 - [ ] **Add service discovery** - For dynamic service registration
+
+---
+
+## UI Theme
+
+The app uses a custom dark theme with teal accent colors:
+
+- **Primary Color:** `#388A7D` (Teal)
+- **Background:** Dark blue-gray
+- **Mode:** Dark mode only (forced)
+
+Theme colors are defined in `frontend/src/app/globals.css`.
 
 ---
 
