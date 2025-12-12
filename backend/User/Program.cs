@@ -27,8 +27,6 @@ public class Program
             await context.Database.MigrateAsync();
             Console.WriteLine("Migrations applied successfully.");
             
-            // Seed test data
-            await Data.DbSeeder.SeedAsync(context);
         }
         
         
