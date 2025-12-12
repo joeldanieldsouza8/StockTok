@@ -1,0 +1,72 @@
+﻿# ===========================================
+# StockTok Development Environment
+# ===========================================
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose up -d userdb   # Start only PostgreSQL
+#   docker compose logs -f        # View logs
+#   docker compose down           # Stop all services
+#   docker compose down -v        # Stop and delete data
+# ===========================================
+
+services:
+  # -----------------------------------------
+  # PostgreSQL Database for User Service
+  # -----------------------------------------
+  userdb:
+    image: postgres:16-alpine
+    container_name: stocktok-userdb
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - userdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # -----------------------------------------
+  # User Service (.NET)
+  # -----------------------------------------
+  user-service:
+    build:
+      context: .
+      dockerfile: backend/User/Dockerfile
+    container_name: stocktok-user-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=${USER_DB_CONNECTION}
+    ports:
+      - "5168:8080"
+    depends_on:
+      userdb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # -----------------------------------------
+  # API Gateway (.NET)
+  # -----------------------------------------
+  api-gateway:
+    build:
+      context: .
+      dockerfile: backend/ApiGateway/Dockerfile
+    container_name: stocktok-api-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
+    ports:
+      - "5069:8080"
+    depends_on:
+      - user-service
+    restart: unless-stopped
+
+volumes:
+  userdb_data:
