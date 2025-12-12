@@ -163,24 +163,40 @@ public class WatchlistController : ControllerBase
     }
 
     /// <summary>
-    /// Extracts the Auth0 subject ID from the JWT claims and looks up the user.
-    /// Returns the internal UserId (Guid) or null if user not found.
+    /// Gets the user ID from the JWT token, creating the user if they don't exist.
+    /// This allows new Auth0 users to automatically be added to the database on first request.
     /// </summary>
     private async Task<Guid?> GetUserIdFromToken()
     {
         // The 'sub' claim contains the Auth0 subject ID (e.g., "auth0|123456")
         var auth0SubjectId = User.FindFirst("sub")?.Value 
-                          ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(auth0SubjectId))
             return null;
 
-        // Look up the user by their Auth0 subject ID
+        // Try to find existing user
         var user = await _context.Users
             .Where(u => u.Auth0SubjectId == auth0SubjectId)
-            .Select(u => new { u.Id })
             .FirstOrDefaultAsync();
 
-        return user?.Id;
+        // Create user if they don't exist
+        if (user == null)
+        {
+            user = new Models.User
+            {
+                Id = Guid.NewGuid(),
+                Auth0SubjectId = auth0SubjectId,
+                FullName = User.FindFirst("name")?.Value ?? "Unknown",
+                Username = User.FindFirst("nickname")?.Value ?? auth0SubjectId,
+                Email = User.FindFirst("email")?.Value ?? "",
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
+        return user.Id;
     }
 }
