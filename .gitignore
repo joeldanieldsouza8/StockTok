@@ -1,3 +1,8 @@
+.env
+.env.local
+.env.*.local
+*.env
+
 # .NET
 bin/
 obj/
@@ -6,6 +11,11 @@ riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
 *.user
+
+out/
+publish/
+
+
 # Python
 **/__pycache__/
 **/.vscode/
@@ -17,3 +27,12 @@ riderModule.iml
 **/dist/
 
 **.DS_Store
+
+# DOCKER
+docker-compose.override.yml
+compose.override.yaml
+
+#DB
+*.db
+*.sqlite
+
