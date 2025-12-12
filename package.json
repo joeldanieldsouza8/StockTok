@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "'": "file:auth0/nextjs-auth0/edge'",
-    "@auth0/nextjs-auth0": "^4.13.2"
-  }
-}

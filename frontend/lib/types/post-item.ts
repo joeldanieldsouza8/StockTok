@@ -1,5 +1,7 @@
+import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_FORM_ACTIONS } from "react";
+
 export interface PostItem {
-    id: string;
+    id?: string;
     username: string;
     title: string;
     description: string;
@@ -10,9 +12,11 @@ export interface PostItem {
     comments: number;
 }
 
-export interface PostItemObject extends Omit<PostItem, "id" | "upvotes" | "downvotes" | "comments"> {
-    username: string,
+export interface PostItemObject {
+    id?: string;
+    username: string;
     title: string;
     description: string;
-    time_created: Date;
+    time_created: string;
+    ticker: string;
 }

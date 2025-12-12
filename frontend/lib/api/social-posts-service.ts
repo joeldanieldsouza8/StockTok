@@ -6,30 +6,25 @@ import { PostItem, PostItemObject } from "../types/post-item";
 import { Header } from "next/dist/lib/load-custom-routes";
 
 
-export async function getPosts(): Promise<PostItem[]> {
-    const endpoint = "/api/posts"
-    
-    console.log("Calling GET", endpoint);
-    
-    const response = await fetch(endpoint, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    
-    if (!response.ok) {
-        throw new Error(`Failed to fetch posts: ${response.status}`);
+const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || ""
+
+
+
+function makeid(length: number) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    
-    const posts: PostItem[] = await response.json();
-    console.log("Received posts:", posts.length);
-    return posts;
+    return result;
 }
 
 export async function createPost(post: PostItemObject): Promise<PostItem> {
 
-    const endpoint = "/api/posts"
+    post.id = makeid(5);
+
+    const endpoint = `${BACKEND_BASE_URL}/api/posts`
     // const { token } = await auth0.getAccessToken(); // to add once backend is created
 
     const headers: Headers = new Headers()
@@ -50,4 +45,20 @@ export async function createPost(post: PostItemObject): Promise<PostItem> {
     const newPost: PostItem = await response.json();
     return newPost;
 
+}
+
+
+export async function getAllPosts(): Promise<PostItem[]> {
+  const response = await fetch(`${BACKEND_BASE_URL}/api/posts`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch posts');
+  }
+
+  return response.json();
 }
