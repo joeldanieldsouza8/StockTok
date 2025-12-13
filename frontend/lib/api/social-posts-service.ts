@@ -29,7 +29,7 @@ export async function createPost(post: PostItemObject): Promise<PostItem> {
 
     const headers: Headers = new Headers()
     headers.set("Content-Type", "application/json")
-    headers.set("Accept", "application.json")
+    headers.set("Accept", "application/json")
 
     const request: RequestInfo = new Request(endpoint, {
         method: "POST", 

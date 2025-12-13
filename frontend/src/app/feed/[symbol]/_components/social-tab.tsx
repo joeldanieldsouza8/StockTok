@@ -153,6 +153,7 @@ export default function PostTab() {
 
 
   return (
+    <div className="flex items-center justify-center min-h-screen p-4">
     <div className="flex w-full max-w-sm flex-col gap-6">
 
       {/* Toggle button - NO form wrapper */}
@@ -247,6 +248,7 @@ export default function PostTab() {
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
     </div>
   )
 }

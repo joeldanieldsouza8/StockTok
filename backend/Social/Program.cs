@@ -16,9 +16,11 @@ namespace Social
             // Add CORS services
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,policy => {
+                options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
                     policy.WithOrigins("http://localhost:3000")
-                        .WithHeaders("Content-Type", "Accept", "Authorization").AllowAnyMethod();
+                        .AllowAnyHeader()  
+                        .AllowAnyMethod()   
+                        .AllowCredentials();
                 });
             });
 
@@ -37,6 +39,15 @@ namespace Social
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider
+                    .GetRequiredService<PostDBContext>(); 
+
+                // This command applies any pending migrations and creates the schema
+                dbContext.Database.Migrate();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -45,7 +56,7 @@ namespace Social
 
             //app.UseHttpsRedirection();
 
-            app.UseCors(); // IMPORTANT
+            app.UseCors(MyAllowSpecificOrigins); // IMPORTANT
 
             app.UseAuthorization();
 
