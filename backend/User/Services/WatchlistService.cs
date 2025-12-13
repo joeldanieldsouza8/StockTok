@@ -27,6 +27,29 @@ public class WatchlistService
             
         return watchlists.Select(MapToResponse).ToList();
     }
+    
+    
+    /// <summary>
+    /// Get the top 'n' tickers for a user
+    /// </summary>
+    public async Task<List<TopTickersResponse>> GetTopTickersAsync(Guid userId, int n = 3)
+    {
+        var topTickers = await _context.WatchlistTickers
+            .Where(wt => w.Watchlist.UserId == userId)
+            .GroupBy(wt => new { wt.TickerId, wt.StockName })
+            .Select(g => new TopTickersResponse
+            {
+                Id = g.Key.TickerId,
+                StockName = g.Key.StockName,
+                Count = g.Count()
+            })
+            .OrderByDescending(t => t.Count)
+            .Take(n)
+            .ToListAsync()
+
+        return topTickers;
+    }
+    
 
     /// <summary>
     /// Get a specific watchlist by ID
