@@ -53,6 +53,20 @@ public class WatchlistController : ControllerBase
     }
 
     /// <summary>
+    /// Get the top N most common tickers across user's watchlists
+    /// </summary>
+    [HttpGet("top-tickers")]
+    public async Task<IActionResult> GetTopTickers([FromQuery] int count = 3)
+    {
+        var userId = await GetUserIdFromToken();
+        if (userId == null)
+            return Unauthorized(new { error = "User not found" });
+        
+        var topTickers = await _watchlistService.GetTopTickersAsync(userId.Value, count);
+        return Ok(topTickers);
+    }
+
+    /// <summary>
     /// Create a new watchlist
     /// </summary>
     [HttpPost]
