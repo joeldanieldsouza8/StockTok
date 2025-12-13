@@ -36,3 +36,12 @@ compose.override.yaml
 *.db
 *.sqlite
 
+# Backend
+backend/User/appsettings.json
+backend\User\appsettings.json
+backend\News\appsettings.json
+backend/News/appsettings.json
+
+# Backend (For Mac)
+.DS_Store
+backend/.DS_Store
