@@ -14,7 +14,7 @@ export default async function FeedPage({ params }: FeedPageProps) {
     
     return (
         <Tabs defaultValue="posts" className="w-full">
-            <TabsList>
+            <TabsList className="mx-auto w-fit mt-10">
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
