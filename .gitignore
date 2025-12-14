@@ -5,6 +5,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
+.vs/
 *.user
 
 # Python
@@ -21,8 +22,12 @@ backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
+backend/StockTok/appsettings.json
+backend/StockTok/appsettings.Development.json
+.vs
+backend/News/Migrations/
 .env
+backend/Social/Migrations
 
-# Backend (For Mac)
 .DS_Store
 backend/.DS_Store
