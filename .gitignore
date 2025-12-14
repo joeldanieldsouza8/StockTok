@@ -27,7 +27,7 @@ backend/StockTok/appsettings.Development.json
 .vs
 backend/News/Migrations/
 .env
+backend/Social/Migrations
 
-# Backend (For Mac)
 .DS_Store
 backend/.DS_Store
