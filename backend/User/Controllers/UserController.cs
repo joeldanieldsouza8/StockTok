@@ -111,7 +111,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var auth0SubjectId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var auth0SubjectId = User.FindFirst("sub")?.Value 
+                                 ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(auth0SubjectId))
             {
                 _logger.LogWarning("Auth0 subject ID (sub) claim not found in token.");
