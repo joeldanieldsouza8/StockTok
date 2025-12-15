@@ -81,7 +81,7 @@ services:
       - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
       - ReverseProxy__Clusters__marketCluster__Destinations__market1__Address=http://market-service:8000/
     ports:
-      - "5000:8080"
+      - "5069:8080"
     depends_on:
       - user-service
       - market-service
