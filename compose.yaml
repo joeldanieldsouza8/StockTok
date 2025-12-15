@@ -43,11 +43,25 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=${USER_DB_CONNECTION}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
     ports:
       - "5168:8080"
     depends_on:
       userdb:
         condition: service_healthy
+    restart: unless-stopped
+
+  # -----------------------------------------
+  # Market Data Service (Python/FastAPI)
+  # -----------------------------------------
+  market-service:
+    build:
+      context: backend/MarketDataService
+      dockerfile: Dockerfile
+    container_name: stocktok-market-service
+    ports:
+      - "8000:8000"
     restart: unless-stopped
 
   # -----------------------------------------
@@ -61,11 +75,41 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+      # Override YARP cluster destinations to use Docker service names
       - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
+      - ReverseProxy__Clusters__marketCluster__Destinations__market1__Address=http://market-service:8000/
     ports:
-      - "5069:8080"
+      - "5000:8080"
     depends_on:
       - user-service
+      - market-service
+    restart: unless-stopped
+
+  # -----------------------------------------
+  # Frontend (Next.js)
+  # -----------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:5000
+    container_name: stocktok-frontend
+    environment:
+      # Auth0 runtime variables (server-side)
+      - AUTH0_SECRET=${AUTH0_SECRET}
+      - AUTH0_BASE_URL=http://localhost:3000
+      - AUTH0_ISSUER_BASE_URL=https://${AUTH0_DOMAIN}
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+      - AUTH0_SCOPE=openid profile email
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
     restart: unless-stopped
 
 volumes:
