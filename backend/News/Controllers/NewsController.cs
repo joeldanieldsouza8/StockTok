@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using News.Clients;
 using News.DBContexts;
 using News.Models;
-using News.Services;
 
 namespace News.Controllers
 {   
