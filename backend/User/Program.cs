@@ -1,8 +1,9 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using User.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;  // For JwtBearerDefaults
+using Microsoft.EntityFrameworkCore;  // For DbContext
+using Microsoft.IdentityModel.Tokens;  // Add for TokenValidationParameters
+using System.Security.Claims;  // Add for ClaimTypes
+
 using User.Services;
 
 namespace User;
