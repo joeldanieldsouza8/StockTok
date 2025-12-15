@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using News.Clients;
 using News.DBContexts;
-using News.Services;
 using News.Settings;
 
 namespace News;

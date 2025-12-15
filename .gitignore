@@ -17,11 +17,10 @@ riderModule.iml
 **/dist/
 
 # Backend
-backend/User/appsettings.json
-backend\User\appsettings.json
-backend\News\appsettings.json
-backend/News/appsettings.json
+appsettings.json
+appsettings.Development.json
 .env
+.env.local
 
 # Backend (For Mac)
 .DS_Store
