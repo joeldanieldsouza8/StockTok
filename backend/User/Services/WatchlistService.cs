@@ -35,8 +35,8 @@ public class WatchlistService
     public async Task<List<TopTickersResponse>> GetTopTickersAsync(Guid userId, int n = 3)
     {
         var topTickers = await _context.WatchlistTickers
-            .Where(wt => w.Watchlist.UserId == userId)
-            .GroupBy(wt => new { wt.TickerId, wt.StockName })
+            .Where(wt => wt.Watchlist.UserId == userId)
+            .GroupBy(wt => new { wt.TickerId, wt.Ticker.StockName })
             .Select(g => new TopTickersResponse
             {
                 Id = g.Key.TickerId,
@@ -45,7 +45,7 @@ public class WatchlistService
             })
             .OrderByDescending(t => t.Count)
             .Take(n)
-            .ToListAsync()
+            .ToListAsync();
 
         return topTickers;
     }
