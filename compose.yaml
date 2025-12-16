@@ -95,7 +95,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:5000
+        - BACKEND_API_URL=http://localhost:5069
     container_name: stocktok-frontend
     environment:
       # Auth0 runtime variables (server-side)
