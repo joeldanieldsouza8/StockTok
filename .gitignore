@@ -31,3 +31,5 @@ backend/Social/Migrations
 
 .DS_Store
 backend/.DS_Store
+
+env
