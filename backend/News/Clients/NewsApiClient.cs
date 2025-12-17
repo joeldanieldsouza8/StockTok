@@ -22,7 +22,7 @@ public class NewsApiClient
         
         var tickers = string.Join(",", symbols);
         
-        var requestUri = $"/v1/news/all?symbols={tickers}&filter_entities=true&language=en&api_token={_settings.ApiToken}";
+        var requestUri = $"/v1/news/all?symbols={tickers}&filter_entities=false&language=en&api_token={_settings.ApiToken}";
             
         var response = await _httpClient.GetAsync(requestUri);
 
