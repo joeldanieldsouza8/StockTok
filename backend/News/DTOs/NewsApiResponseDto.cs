@@ -2,7 +2,7 @@ namespace News.DTOs;
 
 public class NewsApiResponseDto
 {
-    public MetaDto Meta { get; set; } 
+    public MetaDto Meta { get; set; } = new();
     public List<NewsArticleDto> Data { get; set; } = [];
 
     public class MetaDto
@@ -19,7 +19,7 @@ public class NewsApiResponseDto
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Snippet { get; set; } = string.Empty;
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
         public string Language { get; set; } = string.Empty;
         public string Source { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
@@ -29,7 +29,7 @@ public class NewsApiResponseDto
 
     public class EntityDto
     {
-        public string Symbol { get; set; }
+        public string Symbol { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string Industry { get; set; } = string.Empty;

@@ -16,13 +16,13 @@ public class NewsApiClient
         _settings = settings.Value;
     }
         
-    public async Task<List<NewsApiResponseDto.NewsArticleDto>> GetNewsAsync(NewsFilterParams queryParams)
+    public async Task<List<NewsApiResponseDto.NewsArticleDto>> GetAllNewsBySymbolsAsync(List<string> symbols)
     {
         // var requestUri = $"/v1/news/all?symbols=NVDA%2CAAPL&filter_entities=true&language=en&api_token={_settings.ApiToken}";
-
-        var tickers = string.Join(",", queryParams.Symbols);
         
-        var requestUri = $"/v1/news/all?symbols={tickers}&filter_entities={queryParams.FilterEntities}&language={queryParams.Languages}&api_token={_settings.ApiToken}";
+        var tickers = string.Join(",", symbols);
+        
+        var requestUri = $"/v1/news/all?symbols={tickers}&filter_entities=true&language=en&api_token={_settings.ApiToken}";
             
         var response = await _httpClient.GetAsync(requestUri);
 
