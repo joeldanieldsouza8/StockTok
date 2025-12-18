@@ -7,7 +7,7 @@ namespace News.Settings;
 /// </summary>
 public class NewsApiSettings
 {
-    public const string SectionName = "NewsAPI";
+    public const string SectionName = "NewsApi";
 
     /// <summary>
     /// Base URL for the Marketaux News API.

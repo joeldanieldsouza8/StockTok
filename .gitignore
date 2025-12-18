@@ -18,16 +18,11 @@ riderModule.iml
 **/dist/
 
 # Backend
-backend/User/appsettings.json
-backend\User\appsettings.json
-backend\News\appsettings.json
-backend/News/appsettings.json
-backend/StockTok/appsettings.json
-backend/StockTok/appsettings.Development.json
-.vs
-backend/News/Migrations/
+appsettings.json
+appsettings.Development.json
 .env
-backend/Social/Migrations
+.env.local
 
+# Backend (For Mac)
 .DS_Store
 backend/.DS_Store

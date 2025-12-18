@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using News.DBContexts;
+using News.Clients;
+using News.Data;
 using News.Services;
 using News.Settings;
 
@@ -26,8 +27,8 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
         
-        services.AddDbContext<NewsContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("WebApiDatabase")));
+        services.AddDbContext<NewsDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("NewsDatabase")));
         
         // Bind the "NewsApi" section from the 'appsettings.json' to the 'NewsApiSettings' class
         services.AddOptions<NewsApiSettings>()
@@ -42,6 +43,8 @@ public class Program
             client.BaseAddress = new Uri(settings.BaseUrl);
             // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); // TODO: This may be optional if the data returned (i.e., the data will be consumed) is already in JSON format.
         });
+        
+        services.AddScoped<NewsService>();
         
         // Prevent circular referencing
         services.AddControllers()
@@ -66,8 +69,8 @@ public class Program
         // app.UseHttpsRedirection();
 
         // The order of these is critical
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
         app.MapControllers();
     }
