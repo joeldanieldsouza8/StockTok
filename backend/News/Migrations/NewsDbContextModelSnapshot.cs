@@ -82,7 +82,7 @@ namespace News.Migrations
 
                     b.HasIndex("ArticleID");
 
-                    b.ToTable("NewsArticleEntity", "News");
+                    b.ToTable("NewsArticleEntities", "News");
                 });
 
             modelBuilder.Entity("News.Models.NewsArticle+NewsArticleEntity", b =>

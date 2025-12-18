@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace News.Migrations
 {
     [DbContext(typeof(NewsDbContext))]
-    [Migration("20251217034019_InitialCreate")]
+    [Migration("20251218163238_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -85,7 +85,7 @@ namespace News.Migrations
 
                     b.HasIndex("ArticleID");
 
-                    b.ToTable("NewsArticleEntity", "News");
+                    b.ToTable("NewsArticleEntities", "News");
                 });
 
             modelBuilder.Entity("News.Models.NewsArticle+NewsArticleEntity", b =>

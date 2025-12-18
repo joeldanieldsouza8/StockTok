@@ -32,7 +32,7 @@ namespace News.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NewsArticleEntity",
+                name: "NewsArticleEntities",
                 schema: "News",
                 columns: table => new
                 {
@@ -45,9 +45,9 @@ namespace News.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NewsArticleEntity", x => x.ID);
+                    table.PrimaryKey("PK_NewsArticleEntities", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_NewsArticleEntity_NewsArticles_ArticleID",
+                        name: "FK_NewsArticleEntities_NewsArticles_ArticleID",
                         column: x => x.ArticleID,
                         principalSchema: "News",
                         principalTable: "NewsArticles",
@@ -56,9 +56,9 @@ namespace News.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_NewsArticleEntity_ArticleID",
+                name: "IX_NewsArticleEntities_ArticleID",
                 schema: "News",
-                table: "NewsArticleEntity",
+                table: "NewsArticleEntities",
                 column: "ArticleID");
         }
 
@@ -66,7 +66,7 @@ namespace News.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NewsArticleEntity",
+                name: "NewsArticleEntities",
                 schema: "News");
 
             migrationBuilder.DropTable(
