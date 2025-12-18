@@ -5,6 +5,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
+.vs/
 *.user
 backend/.vs
 
