@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using News.Models;
 using News.Services;
 
 namespace News.Controllers;
@@ -15,10 +14,12 @@ public class NewsController : ControllerBase
         _newsService = newsService;
     }
 
-    [HttpGet("{symbol}")]
-    public async Task<IActionResult> GetAllNewsBySymbolAsync(string symbol)
+    [HttpGet]
+    public async Task<IActionResult> GetAllNewsBySymbolsAsync([FromQuery] List<string>symbols)
     {
-        var articles = await _newsService.GetAllNewsBySymbolAsync(symbol.ToUpper());
+        symbols = symbols.Select(s => s.ToUpper()).ToList();
+
+        var articles = await _newsService.GetAllNewsBySymbolsAsync(symbols);
 
         return Ok(articles);
     }
