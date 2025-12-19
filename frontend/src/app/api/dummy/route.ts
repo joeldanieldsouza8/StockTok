@@ -1,3 +1,4 @@
+'use server'
 import { auth0 } from "@/src/lib/auth0";
 import { NextResponse } from "next/server";
 
