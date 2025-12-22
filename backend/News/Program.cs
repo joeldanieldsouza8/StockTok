@@ -31,9 +31,14 @@ public class Program
             options.UseNpgsql(configuration.GetConnectionString("NewsDatabase")));
         
         // Bind the "NewsApi" section from the 'appsettings.json' to the 'NewsApiSettings' class
-        services.AddOptions<NewsApiSettings>()
-            .Bind(configuration.GetSection(NewsApiSettings.SectionName))
-            .ValidateDataAnnotations() // Ensures required fields are present at startup
+        // services.AddOptions<NewsApiSettings>()
+        //     .Bind(configuration.GetSection(NewsApiSettings.SectionName))
+        //     .ValidateDataAnnotations() // Ensures required fields are present at startup
+        //     .ValidateOnStart();
+        
+        builder.Services.AddOptions<NewsApiSettings>()
+            .BindConfiguration("NewsApiSettings") 
+            .ValidateDataAnnotations()
             .ValidateOnStart();
         
         // Register the Typed HttpClient with IHttpClientFactory

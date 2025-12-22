@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import NewsTab from "@/src/app/feed/[symbol]/_components/news-tab";
-import PostTab from "./_components/social-tab";
+
+import NewsTab from "@/src/app/feed/[symbol]/_components/news/news-tab";
+import PostsTab from "@/src/app/feed/[symbol]/_components/posts/posts-tab";
 
 interface FeedPageProps {
     params: Promise<{symbol: string}>;
@@ -19,9 +20,9 @@ export default async function FeedPage({ params }: FeedPageProps) {
                 <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="posts">
-                <PostTab />
-            </TabsContent>
+            {/*<TabsContent value="posts">*/}
+            {/*    <PostsTab symbol={upperSymbol} />*/}
+            {/*</TabsContent>*/}
             
             <TabsContent value="news">
                 <NewsTab symbol={upperSymbol} />

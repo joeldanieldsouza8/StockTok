@@ -1,4 +1,4 @@
-const BASE_URL = process.env.BACKEND_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
 interface FetchOptions extends RequestInit {
     // You can add custom options here if needed
