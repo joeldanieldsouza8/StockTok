@@ -8,16 +8,16 @@ namespace ApiGateway;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         ConfigureServices(builder);
-        
+
         var app = builder.Build();
-        
+
         ConfigureMiddleware(app);
-        
+
         app.Run();
     }
     
@@ -26,7 +26,19 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
         
-        // [TODO] Use Ocelot or YARP, and add the necessary configurations here.
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowNextJs", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000") // Next.js frontend URL
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
+        
+        builder.Services.AddReverseProxy()
+            .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
         
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -50,10 +62,12 @@ public class Program
         
         // app.UseHttpsRedirection();
         
+        app.UseCors("AllowNextJs");
+        
         // The order of these is critical
         app.UseAuthentication();
         app.UseAuthorization();
         
-        app.MapControllers();
+        app.MapReverseProxy();
     }
 }
