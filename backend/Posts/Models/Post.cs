@@ -19,7 +19,7 @@ public class Post
     public DateTime UpdatedAt { get; set; }
     
     // Foreign Keys
-    public Guid AuthorId { get; set; }
+    public string AuthorId { get; set; } = null!;
     
     // Navigation property
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();

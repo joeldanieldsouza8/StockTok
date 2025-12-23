@@ -12,7 +12,7 @@ public class Comment
 
     // Foreign Keys
     public Guid PostId { get; set; }
-    public Guid AuthorId { get; set; }
+    public string AuthorId { get; set; } = null!;
 
     // Navigation Property: A Comment belongs to One Post
     public Post Post { get; set; } = null!;
