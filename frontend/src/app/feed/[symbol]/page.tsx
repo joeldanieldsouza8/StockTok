@@ -20,9 +20,9 @@ export default async function FeedPage({ params }: FeedPageProps) {
                 <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
             
-            {/*<TabsContent value="posts">*/}
-            {/*    <PostsTab symbol={upperSymbol} />*/}
-            {/*</TabsContent>*/}
+            <TabsContent value="posts">
+                <PostsTab symbol={upperSymbol} />
+            </TabsContent>
             
             <TabsContent value="news">
                 <NewsTab symbol={upperSymbol} />
