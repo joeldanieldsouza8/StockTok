@@ -23,18 +23,15 @@ services:
     ports:
       - "${NEWS_DB_PORT}:5432" # Maps localhost:5433 to container:5432
 
-#  # -----------------------------------------
-#  # PostgreSQL Database for Social Service
-#  # -----------------------------------------
-#  socialdb:
-#    image: postgres:16-alpine
-#    container_name: stocktok-socialdb
-#    environment:
-#      POSTGRES_USER: ${POSTGRES_USER}
-#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      POSTGRES_DB: ${POSTGRES_DB}
-#    ports:
-#      - "5432:5432"
+  posts-db:
+    image: postgres:latest
+    container_name: posts-db-container
+    environment:
+      POSTGRES_USER: ${POSTS_DB_USER}
+      POSTGRES_PASSWORD: ${POSTS_DB_PASSWORD}
+      POSTGRES_DB: ${POSTS_DB_NAME}
+    ports:
+      - "${POSTS_DB_PORT}:5432"
 #    volumes:
 #      - socialdb_data:/var/lib/postgresql/data
 #    healthcheck:

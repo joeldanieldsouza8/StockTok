@@ -5,10 +5,7 @@ import {httpClient} from "@/lib/api/fetch-client";
 import { PostItem, PostItemObject } from "../types/post-item";
 import { Header } from "next/dist/lib/load-custom-routes";
 
-
 const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || ""
-
-
 
 function makeid(length: number) {
     var result           = '';
@@ -46,7 +43,6 @@ export async function createPost(post: PostItemObject): Promise<PostItem> {
     return newPost;
 
 }
-
 
 export async function getAllPosts(): Promise<PostItem[]> {
   const response = await fetch(`${BACKEND_BASE_URL}/api/posts`, {

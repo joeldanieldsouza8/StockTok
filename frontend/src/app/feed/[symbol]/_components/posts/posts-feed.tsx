@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { PostItem, PostItemObject } from '@/lib/types/post-item';
-import { createPost } from '@/lib/api/social-posts-service';
+import { createPost } from '@/lib/api/posts-service';
 
 interface PostsFeedProps {
     symbol: string;
