@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Posts.DTOs;
 using Posts.Models;
 using Posts.Services;
 
@@ -19,12 +20,19 @@ public class PostsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePostAsync([FromBody] Post post)
+    public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
     {
-        var newPost = await _postsService.CreatePostAsync(post);
+        // Get the user id from the claims in the JWT
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        return CreatedAtAction(nameof(GetPostByUserAsync), new { id = newPost.PostId }, new { id = newPost.PostId });
+        // Guard clause
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID is missing from token.");
+        }
+        
+        var newPost = await _postsService.CreatePostAsync(createPostDto, userId);
+        
+        return CreatedAtAction(nameof(CreatePostAsync), new { id = newPost.Id }, newPost);
     }
-    
-    
 }

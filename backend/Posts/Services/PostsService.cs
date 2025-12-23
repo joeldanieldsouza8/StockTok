@@ -1,4 +1,5 @@
 using Posts.Data;
+using Posts.DTOs;
 using Posts.Models;
 
 namespace Posts.Services;
@@ -12,13 +13,24 @@ public class PostsService
         _context = context;
     }
     
-    public async Task<Post> CreatePostAsync(Post post)
+    public async Task<Post> CreatePostAsync(CreatePostDto createPostDto,  string authorId)
     {
-        // Save the post to the database
-        _context.Posts.Add(post);
-        await _context.SaveChangesAsync();
+        // Create a new post
+        var newPost = new Post
+        {
+            Id = Guid.NewGuid(), 
+            Title = createPostDto.Title,
+            Body = createPostDto.Body,
+            Ticker = createPostDto.Ticker,
+            
+            // Foreign Key
+            AuthorId = authorId
+        };
 
-        // Return something here
+        // Save the post to the database
+        _context.Posts.Add(newPost);
+        await _context.SaveChangesAsync();
         
+        return newPost; 
     }
 }
