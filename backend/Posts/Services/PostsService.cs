@@ -12,6 +12,12 @@ public class PostsService
         _context = context;
     }
     
-    public async Task<List<Post>> GetAllPostsAsync()
-    {}
+    public async Task<Guid> CreatePostAsync(Post post)
+    {
+        // Save the post to the database
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync();
+
+        return post.Id;
+    }
 }
