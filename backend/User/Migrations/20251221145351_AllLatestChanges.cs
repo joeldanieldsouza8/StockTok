@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace User.Migrations
 {
     /// <inheritdoc />
-    public partial class AddWatchlistFeature : Migration
+    public partial class AllLatestChanges : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
