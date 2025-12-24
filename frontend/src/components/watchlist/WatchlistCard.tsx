@@ -34,7 +34,7 @@ import { watchlistService } from "@/services/watchlist.service";
 interface WatchlistCardProps {
   watchlist: WatchlistResponse;
   onDelete: (id: string) => void;
-  onUpdate: (id: string, name: string) => void;
+  onUpdate: (id: string, name: string) => Promise<void>;
   onRefresh: () => void;
 }
 
