@@ -1,5 +1,5 @@
 'use server'
-import { auth0 } from "@/lib/auth0";
+import { auth0 } from "@/src/lib/auth0";
 import { NextResponse } from "next/server";
 
 export async function GET() {
