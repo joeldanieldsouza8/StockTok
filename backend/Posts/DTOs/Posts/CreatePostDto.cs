@@ -1,4 +1,4 @@
-namespace Posts.DTOs;
+namespace Posts.DTOs.Posts;
 
 public class CreatePostDto
 {

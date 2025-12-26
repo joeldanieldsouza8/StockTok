@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Posts.Data;
+using Posts.Hubs;
+using Posts.Services;
 
 namespace Posts;
 
@@ -25,6 +27,11 @@ public class Program
         
         services.AddDbContext<PostsDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("PostsDatabase")));
+        
+        services.AddScoped<PostsService>();
+        services.AddScoped<CommentsService>();
+        
+        services.AddSignalR();
         
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -52,5 +59,7 @@ public class Program
         // app.UseAuthorization();
 
         app.MapControllers();
+        
+        app.MapHub<CommentHub>("/hubs/comments");
     }
 }

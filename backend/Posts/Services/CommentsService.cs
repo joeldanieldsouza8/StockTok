@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Posts.Data;
 using Posts.DTOs;
+using Posts.DTOs.Comments;
+using Posts.Hubs;
 using Posts.Models;
 
 namespace Posts.Services;
@@ -8,13 +11,15 @@ namespace Posts.Services;
 public class CommentsService
 {
     private readonly PostsDbContext _context;
+    private readonly IHubContext<CommentHub> _hubContext;
 
-    public CommentsService(PostsDbContext context)
+    public CommentsService(PostsDbContext context, IHubContext<CommentHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
     
-    public async Task<Comment> CreateCommentAsync(CreateCommentDto createCommentDto, string authorId)
+    public async Task<CommentResponseDto> CreateCommentAsync(CreateCommentDto createCommentDto, string authorId)
     {
         // Verify that the post exists
         var postExists = await _context.Posts.AnyAsync(p => p.Id == createCommentDto.PostId);
@@ -38,6 +43,93 @@ public class CommentsService
         _context.Comments.Add(newComment);
         await _context.SaveChangesAsync();
 
-        return newComment;
+        var newCommentResponseDto = MapToDto(newComment);
+        
+        await _hubContext.Clients.Group($"POST_{createCommentDto.PostId}")
+            .SendAsync("ReceiveComment", newCommentResponseDto);
+
+        return newCommentResponseDto;
+    }
+    
+    public async Task<List<CommentResponseDto>> GetCommentsByPostIdAsync(Guid postId)
+    {
+        return await _context.Comments
+            .AsNoTracking() 
+            .Where(c => c.PostId == postId)
+            .OrderByDescending(c => c.CreatedAt) 
+            .Select(c => new CommentResponseDto
+            {
+                Id = c.Id,
+                Body = c.Body,
+                AuthorId = c.AuthorId,
+                PostId = c.PostId,
+                CreatedAt = c.CreatedAt
+            })
+            .ToListAsync();
+    }
+
+    public async Task<bool> DeleteCommentAsync(Guid commentId, string authorId)
+    {
+        var comment = await _context.Comments.FindAsync(commentId);
+        
+        if (comment == null) return false;
+
+        if (comment.AuthorId != authorId)
+        {
+            throw new UnauthorizedAccessException("You do not own this comment.");
+        }
+        
+        var postId = comment.PostId;
+
+        // Remove the comment from the database
+        _context.Comments.Remove(comment);
+        await _context.SaveChangesAsync();
+
+        await _hubContext.Clients.Group($"POST_{postId}")
+            .SendAsync("DeleteComment", commentId);
+
+        return true;
+    }
+    
+    public async Task<CommentResponseDto> UpdateCommentAsync(Guid commentId, UpdateCommentDto updateDto, string userId)
+    {
+        var existingComment = await _context.Comments.FindAsync(commentId);
+
+        // Check if the comment is not found 
+        if (existingComment == null)
+        {
+            return new CommentResponseDto();
+        }
+
+        // Check if this is the authorised user
+        if (existingComment.AuthorId != userId)
+        {
+            throw new UnauthorizedAccessException("You do not own this comment.");
+        }
+
+        existingComment.Body = updateDto.Body;
+        existingComment.UpdatedAt = DateTime.UtcNow;
+
+        // Save the updated record to the database
+        await _context.SaveChangesAsync();
+
+        var updatedCommentDto = MapToDto(existingComment);
+        
+        await _hubContext.Clients.Group($"POST_{existingComment.PostId}")
+            .SendAsync("UpdateComment", updatedCommentDto);
+
+        return updatedCommentDto;
+    }
+    
+    private static CommentResponseDto MapToDto(Comment comment)
+    {
+        return new CommentResponseDto
+        {
+            Id = comment.Id,
+            Body = comment.Body,
+            AuthorId = comment.AuthorId,
+            PostId = comment.PostId,
+            CreatedAt = comment.CreatedAt
+        };
     }
 }

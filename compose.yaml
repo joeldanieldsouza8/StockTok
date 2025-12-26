@@ -1,17 +1,14 @@
 services:
-#  user-db:
-#    # image: postgres:latest # Linux OS + PostgreSQL (latest version)
-#    image: postgres:latest
-#
-#    container_name: user-db-container # Name of the Docker Container
-#
-#    environment:
-#      POSTGRES_USER: ${USER_DB_USER}
-#      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
-#      POSTGRES_DB: ${USER_DB_NAME}
-#
-#    ports:
-#      - "${USER_DB_PORT}:5432" # Map the host port to the port of the Docker Container
+  user-db:
+    # image: postgres:latest # Linux OS + PostgreSQL (latest version)
+    image: postgres:latest
+    container_name: user-db-container # Name of the Docker Container
+    environment:
+      POSTGRES_USER: ${USER_DB_USER}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
+    ports:
+      - "${USER_DB_PORT}:5432" # Map the host port to the port of the Docker Container
       
   news-db:
     image: postgres:latest
