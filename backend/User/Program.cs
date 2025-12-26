@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;  // For JwtBearerDefaults
 using Microsoft.EntityFrameworkCore;  // For DbContext
 using Microsoft.IdentityModel.Tokens;  // Add for TokenValidationParameters
 using System.Security.Claims;  // Add for ClaimTypes
-using DotNetEnv;  // For loading .env files
 
 using User.Services;
 
@@ -13,9 +12,6 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        // Load environment variables from .env file
-        Env.Load();
-        
         var builder = WebApplication.CreateBuilder(args);
         
         ConfigureServices(builder);
@@ -45,26 +41,13 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
         
-        // Build connection string from environment variables
-        var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
-        var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-        var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "userdb";
-        var dbUsername = Environment.GetEnvironmentVariable("DB_USERNAME") ?? "postgres";
-        var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
-        
-        var connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUsername};Password={dbPassword}";
-        
         // Database
         services.AddDbContext<UserDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         
         // Register services
         services.AddScoped<UserService>();
         services.AddScoped<WatchlistService>();
-        
-        // Get Auth0 configuration from environment variables
-        var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? configuration["Auth0:Domain"];
-        var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? configuration["Auth0:Audience"];
         
         // Configure JWT Bearer authentication (same Auth0 settings as gateway)
         // The gateway validates the token first, but we configure it here too
@@ -73,12 +56,20 @@ public class Program
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var authority = !string.IsNullOrEmpty(auth0Domain) && !auth0Domain.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                    ? $"https://{auth0Domain}/"
-                    : auth0Domain;
+                var authority = configuration["Auth0:Authority"];
+                if (string.IsNullOrEmpty(authority))
+                {
+                    var domain = configuration["Auth0:Domain"];
+                    if (!string.IsNullOrEmpty(domain))
+                    {
+                        authority = domain.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                            ? domain
+                            : $"https://{domain}/";
+                    }
+                }
 
                 options.Authority = authority;
-                options.Audience = auth0Audience;
+                options.Audience = configuration["Auth0:Audience"];
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
