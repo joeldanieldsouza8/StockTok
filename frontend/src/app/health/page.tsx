@@ -1,4 +1,5 @@
-import { auth0 } from "@/lib/auth0";
+import { auth0 } from "@/src/lib/auth0";
+import DummyApiTester from "@/src/components/DummyApiTester";
 
 export default async function HealthPage() {
   // Fetch the user session securely on the server
@@ -31,10 +32,10 @@ export default async function HealthPage() {
 
       <hr style={{ margin: "1rem 0" }} />
 
-      {/* API Tester - Removed */}
+      {/* API Tester */}
       <section>
         <h2>API Health Tests</h2>
-        <p>API health tests available via backend endpoints.</p>
+        <DummyApiTester />
       </section>
 
       <hr style={{ margin: "1rem 0" }} />

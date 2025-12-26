@@ -10,7 +10,7 @@ using User.Services;
 namespace User.Controllers;
 
 [ApiController]
-[Route("api/watchlists/test")]
+[Route("api/test/watchlists")]
 public class TestWatchlistController : ControllerBase
 {
     private readonly WatchlistService _watchlistService;
