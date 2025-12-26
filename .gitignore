@@ -41,6 +41,8 @@ backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
+# Ignore environment files for services (local secrets)
+backend/User/.env
 
 # Backend (For Mac)
 .DS_Store
