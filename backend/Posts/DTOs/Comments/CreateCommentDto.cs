@@ -1,4 +1,4 @@
-namespace Posts.DTOs;
+namespace Posts.DTOs.Comments;
 
 public class CreateCommentDto
 {

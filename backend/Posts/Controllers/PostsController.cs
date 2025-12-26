@@ -1,8 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Posts.DTOs;
-using Posts.Models;
+using Posts.DTOs.Posts;
 using Posts.Services;
 
 namespace Posts.Controllers;
@@ -19,20 +18,83 @@ public class PostsController : ControllerBase
         _postsService = postsService;
     }
 
+    // GET: api/posts?ticker=TSLA
+    [HttpGet]
+    public async Task<IActionResult> GetPosts([FromQuery] string ticker)
+    {
+        var posts = await _postsService.GetPostsAsync(ticker);
+        
+        return Ok(posts);
+    }
+
+    // GET: api/posts/{id}
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetPost(Guid id)
+    {
+        var post = await _postsService.GetPostByIdAsync(id);
+        
+        if (string.IsNullOrEmpty(post.Id.ToString()))
+        {
+            return NotFound();
+        }
+        
+        return Ok(post);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
     {
-        // Get the user id from the claims in the JWT
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        // Guard clause
+        
         if (string.IsNullOrEmpty(userId))
         {
-            return Unauthorized("User ID is missing from token.");
+            return Unauthorized();
         }
         
         var newPost = await _postsService.CreatePostAsync(createPostDto, userId);
         
-        return CreatedAtAction(nameof(CreatePostAsync), new { id = newPost.Id }, newPost);
+        return CreatedAtAction(nameof(GetPost), new { id = newPost.Id }, newPost);
+    }
+
+    // PUT: api/posts/{id}
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostDto updateDto)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+        
+        var updatedPost = await _postsService.UpdatePostAsync(id, updateDto, userId);
+        
+        if (string.IsNullOrEmpty(updatedPost.Id.ToString()))
+        {
+            return NotFound();
+        }
+        
+        return Ok(updatedPost);
+    }
+
+    // DELETE: api/posts/{id}
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeletePost(Guid id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+        
+        var success = await _postsService.DeletePostAsync(id, userId);
+        
+        if (!success)
+        {
+            return NotFound();
+        }
+        
+        return NoContent();
     }
 }
