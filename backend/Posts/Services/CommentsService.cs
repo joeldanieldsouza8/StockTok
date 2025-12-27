@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Posts.Data;
-using Posts.DTOs;
 using Posts.DTOs.Comments;
 using Posts.Hubs;
 using Posts.Models;
@@ -22,7 +21,8 @@ public class CommentsService
     public async Task<CommentResponseDto> CreateCommentAsync(CreateCommentDto createCommentDto, string authorId)
     {
         // Verify that the post exists
-        var postExists = await _context.Posts.AnyAsync(p => p.Id == createCommentDto.PostId);
+        var postExists = await _context.Posts
+            .AnyAsync(p => p.Id == createCommentDto.PostId);
         
         // Guard clause
         if (!postExists)
@@ -45,6 +45,7 @@ public class CommentsService
 
         var newCommentResponseDto = MapToDto(newComment);
         
+        // Notify the group
         await _hubContext.Clients.Group($"POST_{createCommentDto.PostId}")
             .SendAsync("ReceiveComment", newCommentResponseDto);
 
@@ -70,10 +71,16 @@ public class CommentsService
 
     public async Task<bool> DeleteCommentAsync(Guid commentId, string authorId)
     {
-        var comment = await _context.Comments.FindAsync(commentId);
+        // Find the comment in the database
+        var comment = await _context.Comments
+            .FindAsync(commentId);
         
-        if (comment == null) return false;
+        if (comment == null)
+        {
+            return false;
+        }
 
+        // Check if the user is authorised
         if (comment.AuthorId != authorId)
         {
             throw new UnauthorizedAccessException("You do not own this comment.");
@@ -93,6 +100,7 @@ public class CommentsService
     
     public async Task<CommentResponseDto> UpdateCommentAsync(Guid commentId, UpdateCommentDto updateDto, string userId)
     {
+        // Query the database for the comment
         var existingComment = await _context.Comments.FindAsync(commentId);
 
         // Check if the comment is not found 
@@ -115,6 +123,7 @@ public class CommentsService
 
         var updatedCommentDto = MapToDto(existingComment);
         
+        // Notify the group
         await _hubContext.Clients.Group($"POST_{existingComment.PostId}")
             .SendAsync("UpdateComment", updatedCommentDto);
 

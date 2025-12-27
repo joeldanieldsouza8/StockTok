@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore; // Required for ToListAsync, FirstOrDefaultAsync
+using Microsoft.EntityFrameworkCore; 
 using Posts.Data;
 using Posts.DTOs.Posts;
-using Posts.Hubs; // Import DTOs
+using Posts.Hubs; 
 using Posts.Models;
 
 namespace Posts.Services;
@@ -20,6 +20,7 @@ public class PostsService
     
     public async Task<PostResponseDto> CreatePostAsync(CreatePostDto createPostDto, string authorId)
     {
+        // Create the record for the new post
         var newPost = new Post
         {
             Id = Guid.NewGuid(), 
@@ -31,11 +32,14 @@ public class PostsService
             UpdatedAt = DateTime.UtcNow
         };
 
+        // Save the post to the database
         _context.Posts.Add(newPost);
         await _context.SaveChangesAsync();
         
+        // Map the post from the entity type to the dto type
         var newPostDto = MapToDto(newPost);
         
+        // Add the post to the group
         await _hubContext.Clients.Group($"TICKER_{createPostDto.Ticker}")
             .SendAsync("ReceiveNewPost", newPostDto);
         
@@ -44,28 +48,33 @@ public class PostsService
 
     public async Task<List<PostResponseDto>> GetPostsAsync(string ticker)
     {
-        var query = _context.Posts.AsNoTracking().AsQueryable();
-
-        if (!string.IsNullOrEmpty(ticker))
-        {
-            query = query.Where(p => p.Ticker == ticker);
-        }
-
-        var posts = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+        // Query the database for all the posts by the ticker
+        var posts = await _context.Posts
+            .AsNoTracking()
+            .Where(x => x.Ticker == ticker)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
         
-        return posts.Select(MapToDto).ToList();
+        return posts
+            .Select(MapToDto)
+            .ToList();
     }
 
     public async Task<PostResponseDto> GetPostByIdAsync(Guid id)
     {
-        var post = await _context.Posts.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+        // Query the database for the post
+        var post = await _context.Posts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         return post != null ? MapToDto(post) : new PostResponseDto();
     }
 
     public async Task<PostResponseDto> UpdatePostAsync(Guid id, UpdatePostDto updateDto, string authorId)
     {
-        var post = await _context.Posts.FindAsync(id);
+        // Query the database for the post
+        var post = await _context.Posts
+            .FindAsync(id);
         
         if (post == null)
         {
@@ -93,9 +102,14 @@ public class PostsService
 
     public async Task<bool> DeletePostAsync(Guid id, string authorId)
     {
-        var post = await _context.Posts.FindAsync(id);
+        // Query the database for the post
+        var post = await _context.Posts
+            .FindAsync(id);
         
-        if (post == null) return false;
+        if (post == null)
+        {
+            return false;
+        }
 
         if (post.AuthorId != authorId)
         {
@@ -104,9 +118,11 @@ public class PostsService
         
         var ticker = post.Ticker; 
 
+        // Remove the post from the database
         _context.Posts.Remove(post);
         await _context.SaveChangesAsync();
         
+        // Notify the group
         await _hubContext.Clients.Group($"TICKER_{ticker}")
             .SendAsync("DeletePost", id);
         
