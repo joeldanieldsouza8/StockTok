@@ -19,6 +19,4 @@ export interface NewsArticleEntity {
     articleID: string;
 }
 
-export interface NewsApiResponse {
-    data: NewsArticle[];
-}
+export type NewsApiResponse = NewsArticle[];

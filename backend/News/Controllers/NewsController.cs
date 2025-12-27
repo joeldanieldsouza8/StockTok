@@ -15,12 +15,17 @@ public class NewsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllNewsBySymbolsAsync([FromQuery] List<string>symbols)
+    public async Task<IActionResult> GetAllNewsBySymbolsAsync([FromQuery] string symbols)
     {
-        symbols = symbols.Select(s => s.ToUpper()).ToList();
+        if (string.IsNullOrEmpty(symbols))
+            return BadRequest("No symbols provided");
 
-        var articles = await _newsService.GetAllNewsBySymbolsAsync(symbols);
+        // Split the string by comma and remove whitespace
+        var symbolList = symbols.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                .Select(s => s.Trim().ToUpper())
+                                .ToList();
 
+        var articles = await _newsService.GetAllNewsBySymbolsAsync(symbolList);
         return Ok(articles);
     }
 }

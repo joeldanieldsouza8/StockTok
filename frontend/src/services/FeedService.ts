@@ -1,16 +1,17 @@
-import { getNewsArticles } from "./NewsService";
+import { getNewsArticlesByTickers } from "./NewsService";
 import { FeedItem } from "../types/feed";
+import { WatchlistTicker } from "../types/watchlist";
 
 /**
  * Fetches news articles (and eventually user posts), groups them by stock ticker, 
  * and returns a list containing the latest item for each unique stock.
  * @returns A promise that resolves to an array of FeedItems, with one item per ticker.
  */
-export async function getFeedByTicker(): Promise<FeedItem[]> {
+export async function getFeedByTickers(tickers: WatchlistTicker[]): Promise<FeedItem[]> {
   try {
     // Fetch Data for feed
     const [newsArticles] = await Promise.all([ // Promise.all fetches multiple data sources in parallel
-      getNewsArticles().catch((err) => {
+      getNewsArticlesByTickers(tickers).catch((err) => {
         console.error("DEBUG: Fetch failed details:", err); 
         return [];
       }),
