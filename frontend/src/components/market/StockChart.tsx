@@ -7,7 +7,7 @@ import {
   IChartApi,
   CandlestickSeries,
 } from "lightweight-charts";
-import { OHLCPoint } from "@/src/types/market";
+import { OHLCPoint } from "src/types/market";
 
 interface StockChartProps {
   data: OHLCPoint[];

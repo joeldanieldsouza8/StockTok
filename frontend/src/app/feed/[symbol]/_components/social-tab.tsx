@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppWindowIcon, CodeIcon } from "lucide-react"
-import { auth0 } from '@/src/lib/auth0';
+import { auth0 } from 'src/lib/auth0';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Button } from "@/components/ui/button"
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {Tabs,TabsContent,TabsList,TabsTrigger,} from "@/components/ui/tabs"
-import { PostItem, PostItemObject } from '@/lib/types/post-item';
-import { createPost, getAllPosts } from '@/lib/api/social-posts-service';
+import { Button } from "components/ui/button"
+import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,} from "components/ui/card"
+import { Input } from "components/ui/input"
+import { Label } from "components/ui/label"
+import { Textarea } from "components/ui/textarea"
+import {Tabs,TabsContent,TabsList,TabsTrigger,} from "components/ui/tabs"
+import { PostItem, PostItemObject } from 'lib/types/post-item';
+import { createPost, getAllPosts } from 'lib/api/social-posts-service';
 import { redirect } from 'next/navigation';
 
 export default function PostTab() {

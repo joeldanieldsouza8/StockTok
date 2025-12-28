@@ -1,7 +1,7 @@
-import { NewsItem } from "@/lib/types/news-item";
-import { getNewsBySymbol } from "@/lib/api/news-service";
+import { NewsArticle } from "lib/types/news-item";
+import { getNewsBySymbol } from "lib/api/news-service";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
 import { CheckCircle2, MessageSquare, ThumbsUp } from "lucide-react";
 
 interface NewsTabProps {
@@ -18,7 +18,7 @@ export default async function NewsTab({ symbol }: NewsTabProps) {
   
   console.log("Printing the news article entities")
   news.map((item) => {
-    item.newsArticleEntities.map((entity) => {
+    item.newsArticleEntities?.map((entity) => {
       console.log("entity", entity);
     })
   })

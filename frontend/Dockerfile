@@ -6,7 +6,10 @@
 FROM base AS deps
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json* ./
+# Docker looks for these IN the 'frontend' folder because of your compose context
+COPY package.json package-lock.json ./
+
+# This will now succeed because the files are in the same directory as the command
 RUN npm ci
 
 # -----------------------------------------
@@ -16,13 +19,12 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY frontend/ .
+# This copies everything else FROM frontend/ INTO the container
+COPY . .
 
-# BACKEND_API_URL* vars must be set at build time
 ARG BACKEND_API_URL
 ENV BACKEND_API_URL=$BACKEND_API_URL
 
-# Build Next.js in standalone mode
 RUN npm run build
 
 # -----------------------------------------
@@ -49,4 +51,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# server.js is created by Next.js standalone mode
 CMD ["node", "server.js"]

@@ -1,7 +1,7 @@
-import { UserOnboarding } from "@/src/components/user-onboarding";
+import { UserOnboarding } from "@/components/user-onboarding";
 import React from "react";
 import { redirect } from "next/navigation";
-import { auth0 } from "@/src/lib/auth0";
+import { auth0 } from "@/lib/auth0";
 
 export default async function OnboardingPage() {
   // Get the session on the server

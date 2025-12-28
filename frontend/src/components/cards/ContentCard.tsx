@@ -1,6 +1,6 @@
 import React from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardHeader, CardContent } from "components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
 
 interface ContentCardProps {
   avatarSrc?: string;

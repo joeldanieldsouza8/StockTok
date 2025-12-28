@@ -1,21 +1,21 @@
-import {NewsArticleEntity} from "@/lib/types/news-article-entity";
+// Associated Company
+export interface NewsArticleEntity {
+    id: string;
+    symbol: string;
+    name: string;
+    country: string;
+    industry: string;
+    articleID: string;
+}
 
-export interface NewsItem {
-  uuid: string;
-  // source: {
-  //   name: string;
-  //   icon: string;
-  //   isVerified: boolean;
-  // };
-  title: string;
-  description: string;
-  url: string;
-  // summary: string;
-  // tickers: string[];
-  // metrics: {
-  //   likes: number;
-  //   comments: number;
-  // };
-  publishedAt: string;
-  newsArticleEntities: NewsArticleEntity[];
+
+// News article
+export interface NewsArticle {
+    uuid: string;
+    title: string;
+    description: string;
+    url: string;
+    language: string;
+    publishedAt: string;
+    newsArticleEntities?: NewsArticleEntity[];
 }

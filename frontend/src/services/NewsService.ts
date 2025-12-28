@@ -1,4 +1,8 @@
-import { NewsApiResponse, NewsArticle } from "../types/news";
+import { NewsArticle } from "lib/types/news-item";
+
+interface NewsApiResponse {
+  data: NewsArticle[];
+}
 
 const API_BASE_URL = "http://localhost:5214/api"; // Will need to add this to .env in the future
 

@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card } from "components/ui/card"
+import { Button } from "components/ui/button"
 import { TrendingUp } from "lucide-react"
 
 const timeframes = ["1D", "5D", "1M", "3M", "1Y", "ALL"]

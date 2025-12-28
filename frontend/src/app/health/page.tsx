@@ -1,5 +1,5 @@
-import { auth0 } from "@/src/lib/auth0";
-import DummyApiTester from "@/src/components/DummyApiTester";
+import { auth0 } from "@/lib/auth0";
+import DummyApiTester from "@/components/DummyApiTester";
 
 export default async function HealthPage() {
   // Fetch the user session securely on the server

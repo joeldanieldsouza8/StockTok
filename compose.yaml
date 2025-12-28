@@ -3,15 +3,13 @@
 # ===========================================
 # Usage:
 #   docker compose up -d          # Start all services
-#   docker compose up -d userdb   # Start only PostgreSQL
 #   docker compose logs -f        # View logs
 #   docker compose down           # Stop all services
-#   docker compose down -v        # Stop and delete data
 # ===========================================
 
 services:
   # -----------------------------------------
-  # PostgreSQL Database for User Service
+  # PostgreSQL Databases
   # -----------------------------------------
   userdb:
     image: postgres:16-alpine
@@ -30,6 +28,26 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+
+  news-db:
+    image: postgres:latest
+    container_name: news-db-container
+    environment:
+      POSTGRES_USER: ${NEWS_DB_USER}
+      POSTGRES_PASSWORD: ${NEWS_DB_PASSWORD}
+      POSTGRES_DB: ${NEWS_DB_NAME}
+    ports:
+      - "${NEWS_DB_PORT}:5432"
+
+  posts-db:
+    image: postgres:latest
+    container_name: posts-db-container
+    environment:
+      POSTGRES_USER: ${POSTS_DB_USER}
+      POSTGRES_PASSWORD: ${POSTS_DB_PASSWORD}
+      POSTGRES_DB: ${POSTS_DB_NAME}
+    ports:
+      - "${POSTS_DB_PORT}:5432"
 
   # -----------------------------------------
   # User Service (.NET)
@@ -52,7 +70,6 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-<<<<<<< HEAD
   # -----------------------------------------
   # Market Data Service (Python/FastAPI)
   # -----------------------------------------
@@ -66,7 +83,7 @@ services:
     restart: unless-stopped
 
   # -----------------------------------------
-  # API Gateway (.NET)
+  # API Gateway (.NET / YARP)
   # -----------------------------------------
   api-gateway:
     build:
@@ -78,7 +95,6 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - Auth0__Domain=${AUTH0_DOMAIN}
       - Auth0__Audience=${AUTH0_AUDIENCE}
-      # Override YARP cluster destinations to use Docker service names
       - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
       - ReverseProxy__Clusters__marketCluster__Destinations__market1__Address=http://market-service:8000/
     ports:
@@ -93,13 +109,12 @@ services:
   # -----------------------------------------
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
       args:
         - BACKEND_API_URL=http://localhost:5069
     container_name: stocktok-frontend
     environment:
-      # Auth0 runtime variables (server-side)
       - AUTH0_SECRET=${AUTH0_SECRET}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
       - APP_BASE_URL=http://localhost:3000
@@ -115,49 +130,4 @@ services:
 
 volumes:
   userdb_data:
-=======
-  frontend:
-    build: 
-      context: ./
-      dockerfile: frontend/Dockerfile
-    container_name: stocktok-frontend
-    ports:
-      - "3000:3000" 
-    depends_on:
-      social-service:
-        condition: service_started
-    restart: unless-stopped
-
-  user-db:
-    image: postgres:latest
-    container_name: user-db-container
-    environment:
-      POSTGRES_USER: ${USER_DB_USER}
-      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
-      POSTGRES_DB: ${USER_DB_NAME}
-    ports:
-      - "${USER_DB_PORT}:5432"
-      
-  news-db:
-    image: postgres:latest
-    container_name: news-db-container
-    environment:
-      POSTGRES_USER: ${NEWS_DB_USER}
-      POSTGRES_PASSWORD: ${NEWS_DB_PASSWORD}
-      POSTGRES_DB: ${NEWS_DB_NAME}
-    ports:
-      - "${NEWS_DB_PORT}:5432"
-
-  posts-db:
-    image: postgres:latest
-    container_name: posts-db-container
-    environment:
-      POSTGRES_USER: ${POSTS_DB_USER}
-      POSTGRES_PASSWORD: ${POSTS_DB_PASSWORD}
-      POSTGRES_DB: ${POSTS_DB_NAME}
-    ports:
-      - "${POSTS_DB_PORT}:5432"
-
-volumes:
   socialdb_data:
->>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675

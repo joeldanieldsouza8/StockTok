@@ -1,4 +1,4 @@
-import { NewsArticle } from "./news";
+import {NewsArticle} from "lib/types/news-item";
 //import { UserPost } from "./social";
 
 export type FeedItem =

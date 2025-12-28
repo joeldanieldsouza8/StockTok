@@ -1,4 +1,4 @@
-import { TickerFundamentalData, OHLCPoint } from "@/src/types/market";
+import { TickerFundamentalData, OHLCPoint } from "@/types/market";
 
 // The gateway URL to the FastAPI backend
 const GATEWAY_URL = "http://localhost:5069"; 

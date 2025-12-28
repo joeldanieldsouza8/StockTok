@@ -1,7 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs"
 
-import NewsTab from "@/src/app/feed/[symbol]/_components/news/news-tab";
-import PostsTab from "@/src/app/feed/[symbol]/_components/posts/posts-tab";
+import NewsTab from "@/app/feed/[symbol]/_components/news/news-tab";
+import PostsTab from "@/app/feed/[symbol]/_components/posts/posts-tab";
 
 interface FeedPageProps {
     params: Promise<{symbol: string}>;

@@ -15,10 +15,10 @@ function useParams(): { ticker?: string } {
 
   return params;
 }
-import { getFundamentals, getHistory } from "@/src/services/marketService";
-import { TickerFundamentalData, OHLCPoint } from "@/src/types/market";
-import FundamentalsDisplay from "@/src/components/market/FundamentalsDisplay";
-import StockChart from "@/src/components/market/StockChart"; // Import the new component
+import { getFundamentals, getHistory } from "@/services/marketService";
+import { TickerFundamentalData, OHLCPoint } from "@/types/market";
+import FundamentalsDisplay from "@/components/market/FundamentalsDisplay";
+import StockChart from "@/components/market/StockChart"; // Import the new component
 
 export default function MarketPage() {
   const params = useParams();

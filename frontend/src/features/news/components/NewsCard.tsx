@@ -1,17 +1,13 @@
 import React from "react";
-import { NewsArticle } from "../../../types/news";
-import { ContentCard } from "@/src/components/cards/ContentCard";
+import { NewsArticle } from "lib/types/news-item"; 
+import { ContentCard } from "src/components/cards/ContentCard";
 
 interface Props {
-  article: NewsArticle;
+  article: NewsArticle; 
 }
 
-/**
- * A UI component which displays a single news article as a card.
- * @param article 
- * @returns A rendered ContentCard component containing news details.
- */
 export function NewsCard({ article }: Props) {
+  // Now TypeScript knows that article has newsArticleEntities, title, etc.
   const primaryEntity =
     article.newsArticleEntities && article.newsArticleEntities.length > 0
       ? article.newsArticleEntities[0]
