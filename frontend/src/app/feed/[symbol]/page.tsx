@@ -1,5 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import NewsTab from "@/src/app/feed/[symbol]/_components/news-tab";
+
+import NewsTab from "@/src/app/feed/[symbol]/_components/news/news-tab";
+import PostsTab from "@/src/app/feed/[symbol]/_components/posts/posts-tab";
 
 interface FeedPageProps {
     params: Promise<{symbol: string}>;
@@ -13,13 +15,13 @@ export default async function FeedPage({ params }: FeedPageProps) {
     
     return (
         <Tabs defaultValue="posts" className="w-full">
-            <TabsList>
+            <TabsList className="mx-auto w-fit mt-10">
                 <TabsTrigger value="posts">Posts</TabsTrigger>
                 <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
             
             <TabsContent value="posts">
-                This is the posts tab.
+                <PostsTab symbol={upperSymbol} />
             </TabsContent>
             
             <TabsContent value="news">

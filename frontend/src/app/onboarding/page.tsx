@@ -1,4 +1,4 @@
-import { UserOnboarding } from "@/components/auth";
+import { UserOnboarding } from "@/components/user-onboarding";
 import React from "react";
 import { redirect } from "next/navigation";
 import { auth0 } from "@/lib/auth0";

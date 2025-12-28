@@ -56,7 +56,7 @@ namespace ApiGateway;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -145,11 +145,14 @@ public class Program
         {
             app.UseDeveloperExceptionPage();
         }
-
         app.UseRouting();
 
-        app.UseCors("CorsPolicy");
-
+        app.UseCors("CorsPolicy");        
+        // app.UseHttpsRedirection();
+        
+        app.UseCors("AllowNextJs");
+        
+        // The order of these is critical
         app.UseAuthentication();
         app.UseAuthorization();
 

@@ -10,6 +10,7 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
+.vs/
 *.user
 backend/.vs
 
@@ -28,6 +29,14 @@ publish/
 **/dist/
 
 **.DS_Store
+
+# DOCKER
+docker-compose.override.yml
+compose.override.yaml
+
+#DB
+*.db
+*.sqlite
 
 # DOCKER
 docker-compose.override.yml
