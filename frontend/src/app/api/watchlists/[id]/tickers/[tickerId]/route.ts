@@ -5,11 +5,11 @@ const API_BASE_URL = process.env.BACKEND_API_URL;
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string; tickerId: string } }
+  { params }: { params: Promise<{ id: string; tickerId: string }> }
 ) {
   try {
     const { token } = await auth0.getAccessToken();
-    const { id, tickerId } = params;
+    const { id, tickerId } = await params;
 
     const response = await fetch(
       `${API_BASE_URL}/api/watchlists/${id}/tickers/${tickerId}`,

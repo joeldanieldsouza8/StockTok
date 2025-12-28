@@ -5,11 +5,11 @@ const API_BASE_URL = process.env.BACKEND_API_URL;
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { token } = await auth0.getAccessToken();
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     const response = await fetch(
