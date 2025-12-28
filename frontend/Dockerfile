@@ -1,49 +1,52 @@
-# Stage 1: Build the application
-# Use a Node image to run npm install and the build command
-FROM node:20-alpine AS builder
+﻿FROM node:20-alpine AS base
 
+# -----------------------------------------
+# Stage 1: Install dependencies
+# -----------------------------------------
+FROM base AS deps
 WORKDIR /app
 
-# Copy package.json and package-lock.json first
-COPY frontend/package.json ./
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm ci
 
-# The .env copy is correct since it's in the root
-COPY .env ./.env 
+# -----------------------------------------
+# Stage 2: Build the application
+# -----------------------------------------
+FROM base AS builder
+WORKDIR /app
 
-# Install dependencies (only dev and production)
-RUN npm install --legacy-peer-deps
+COPY --from=deps /app/node_modules ./node_modules
+COPY frontend/ .
 
-# Copy the rest of the frontend application files
-COPY frontend/ . . 
+# BACKEND_API_URL* vars must be set at build time
+ARG BACKEND_API_URL
+ENV BACKEND_API_URL=$BACKEND_API_URL
 
-# IMPORTANT: Run the Next.js build command
+# Build Next.js in standalone mode
 RUN npm run build
 
-# Stage 2: Run the production application
-# Use a smaller, secure base image for the final production image
-FROM node:20-alpine AS runner
+# -----------------------------------------
+# Stage 3: Production image
+# -----------------------------------------
+FROM base AS runner
+WORKDIR /app
 
-# Set environment variables for Next.js production server
-ENV NODE_ENV production
-# Set the port the Next.js server will listen on
-ENV PORT 3000
+ENV NODE_ENV=production
 
-# Copy necessary files from the builder stage
-# Copy the built application files
-COPY --from=builder /app/.next ./.next
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy static files, public files, and node_modules (production only)
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copy built assets
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.env ./.env
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Set the host to listen on all interfaces
-ENV HOSTNAME "0.0.0.0"
+USER nextjs
 
-# Expose the port where Next.js will run
 EXPOSE 3000
 
-# Start the Next.js production server
-# The 'start' script is defined by Next.js in the package.json
-CMD ["npm", "start"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

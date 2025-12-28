@@ -1,3 +1,8 @@
+.env
+.env.local
+.env.*.local
+*.env
+
 # .NET
 bin/
 obj/
@@ -8,8 +13,13 @@ riderModule.iml
 .vs/
 *.user
 
+out/
+publish/
+
+
 # Python
 **/__pycache__/
+**/.vscode/
 **/venv/
 **/.env
 
@@ -17,19 +27,22 @@ riderModule.iml
 **/node_modules/
 **/dist/
 
+**.DS_Store
+
+# DOCKER
+docker-compose.override.yml
+compose.override.yaml
+
+#DB
+*.db
+*.sqlite
+
 # Backend
 backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
-backend/StockTok/appsettings.json
-backend/StockTok/appsettings.Development.json
-.vs
-backend/News/Migrations/
-.env
-backend/Social/Migrations
 
+# Backend (For Mac)
 .DS_Store
 backend/.DS_Store
-
-env

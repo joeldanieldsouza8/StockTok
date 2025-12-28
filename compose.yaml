@@ -1,10 +1,21 @@
+# ===========================================
+# StockTok Development Environment
+# ===========================================
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose up -d userdb   # Start only PostgreSQL
+#   docker compose logs -f        # View logs
+#   docker compose down           # Stop all services
+#   docker compose down -v        # Stop and delete data
+# ===========================================
+
 services:
   # -----------------------------------------
-  # PostgreSQL Database for Social Service
+  # PostgreSQL Database for User Service
   # -----------------------------------------
-  socialdb:
+  userdb:
     image: postgres:16-alpine
-    container_name: stocktok-socialdb
+    container_name: stocktok-userdb
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -12,7 +23,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - socialdb_data:/var/lib/postgresql/data
+      - userdb_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -21,40 +32,85 @@ services:
     restart: unless-stopped
 
   # -----------------------------------------
-  # Social Service (.NET)
+  # User Service (.NET)
   # -----------------------------------------
-  social-service:
+  user-service:
     build:
       context: .
-      dockerfile: backend/Social/Dockerfile
-    container_name: stocktok-social-feed-service
+      dockerfile: backend/User/Dockerfile
+    container_name: stocktok-user-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=socialdb;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - ConnectionStrings__DefaultConnection=${USER_DB_CONNECTION}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
     ports:
-      - "5071:8080"
+      - "5168:8080"
     depends_on:
-      socialdb:
+      userdb:
         condition: service_healthy
     restart: unless-stopped
 
+  # -----------------------------------------
+  # Market Data Service (Python/FastAPI)
+  # -----------------------------------------
+  market-service:
+    build:
+      context: backend/MarketDataService
+      dockerfile: Dockerfile
+    container_name: stocktok-market-service
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
 
+  # -----------------------------------------
+  # API Gateway (.NET)
+  # -----------------------------------------
+  api-gateway:
+    build:
+      context: .
+      dockerfile: backend/ApiGateway/Dockerfile
+    container_name: stocktok-api-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+      # Override YARP cluster destinations to use Docker service names
+      - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
+      - ReverseProxy__Clusters__marketCluster__Destinations__market1__Address=http://market-service:8000/
+    ports:
+      - "5069:8080"
+    depends_on:
+      - user-service
+      - market-service
+    restart: unless-stopped
+
+  # -----------------------------------------
+  # Frontend (Next.js)
+  # -----------------------------------------
   frontend:
-      # Assuming your Dockerfile is in the root where docker-compose.yml is
-      build: 
-        context: ./
-        dockerfile: frontend/Dockerfile
-      container_name: stocktok-frontend
-      ports:
-        # Map host port 3000 to container port 3000
-        - "3000:3000" 
-      # Optional: If your frontend needs to access the user-service via API calls
-      # ensure it waits for the backend service to be running.
-      depends_on:
-        social-service:
-          condition: service_started
-      restart: unless-stopped
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        - BACKEND_API_URL=http://localhost:5069
+    container_name: stocktok-frontend
+    environment:
+      # Auth0 runtime variables (server-side)
+      - AUTH0_SECRET=${AUTH0_SECRET}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - APP_BASE_URL=http://localhost:3000
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+      - AUTH0_SCOPE=openid profile email
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
 volumes:
-  socialdb_data:
+  userdb_data:

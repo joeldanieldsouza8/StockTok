@@ -2,15 +2,14 @@
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["User/User.csproj", "User/"]
-RUN dotnet restore "User/User.csproj"
+COPY ["backend/User/User.csproj", "backend/User/"]
+RUN dotnet restore "backend/User/User.csproj"
 COPY . .
-WORKDIR "/src/User"
+WORKDIR "/src/backend/User"
 RUN dotnet build "./User.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
