@@ -42,6 +42,8 @@ appsettings.json
 appsettings.Development.json
 .env
 .env.local
+# Ignore environment files for services (local secrets)
+backend/User/.env
 
 # Backend (For Mac)
 .DS_Store
