@@ -5,12 +5,7 @@ public class User
     /// <summary>
     /// The unique identifier for the user.
     /// </summary>
-    public Guid Id { get; set; } 
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    public string Auth0SubjectId { get; set; }
+    public string Id { get; set; } = null!;
     
     /// <summary>
     /// The user's full display name.

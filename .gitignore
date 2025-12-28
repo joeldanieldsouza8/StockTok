@@ -33,3 +33,11 @@ backend/Social/Migrations
 backend/.DS_Store
 
 env
+appsettings.json
+appsettings.Development.json
+.env
+.env.local
+
+# Backend (For Mac)
+.DS_Store
+backend/.DS_Store

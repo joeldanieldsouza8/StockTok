@@ -171,5 +171,13 @@ namespace News.Controllers
                 });
             }
         }
+
+        [HttpGet("{symbol}")]
+        public async Task<IActionResult> GetAllNewsBySymbolAsync(string symbol)
+        {
+            var articles = await _newsService.GetAllNewsBySymbolAsync(symbol.ToUpper());
+
+            return Ok(articles);
+        }
     }
 }

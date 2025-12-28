@@ -1,6 +1,8 @@
 import { auth0 } from "@/src/lib/auth0";
 import DummyApiTester from "../components/DummyApiTester";
-
+import { FeedCarousel } from "../components/cards/FeedCarousel";
+import { getFeedByTicker } from "../services/FeedService";
+import { FeedItem } from "../types/feed";
 
 export default async function HomePage() {
   // 1. Fetch the user session securely on the server.
@@ -8,12 +10,24 @@ export default async function HomePage() {
 
   // 2. If no session, render the public-facing login state.
   if (!session) {
+    let feedItems: FeedItem[] = [];
+    try {
+      feedItems = await getFeedByTicker();
+    } catch (error) {
+      console.error('Failed to fetch feed items:', error);
+    }
+
     return (
-      <main>
-        <h2>Please log in to continue.</h2>
-        <a href="/auth/login">
-          <button>Log in</button>
-        </a>
+      <main className="flex flex-col min-h-screen p-8">
+        <div>
+          <h2>Please log in to continue.</h2>
+          <a href="/auth/login">
+            <button>Log in</button>
+          </a>
+        </div>
+        <div className="flex-1 w-full max-w-6xl mx-auto flex flex-col justify-center">
+          <FeedCarousel items={feedItems} autoplay={false} />
+        </div>
       </main>
     );
   }
