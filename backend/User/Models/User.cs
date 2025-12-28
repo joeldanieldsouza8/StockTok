@@ -7,6 +7,7 @@ public class User
     /// <summary>
     /// The unique identifier for the user.
     /// </summary>
+<<<<<<< HEAD
     public Guid Id { get; set; } 
     
     /// <summary>
@@ -14,6 +15,9 @@ public class User
     /// </summary>
     [Required]  // Makes it required for validation
     public string Auth0SubjectId { get; set; } = string.Empty;  // Initialize to avoid warning
+=======
+    public string Id { get; set; } = null!;
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
     
     /// <summary>
     /// The user's full display name.

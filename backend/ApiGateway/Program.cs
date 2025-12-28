@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
+<<<<<<< HEAD
 // -----------------------------------------------------------------------------
 // ApiGateway/Program.cs
 // -----------------------------------------------------------------------------
@@ -53,10 +54,14 @@ using Microsoft.IdentityModel.Tokens;
 // -----------------------------------------------------------------------------
 
 namespace ApiGateway;
+=======
+namespace ApiGateway;
+
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -73,8 +78,27 @@ public class Program
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
+<<<<<<< HEAD
 
         // Configure JWT Bearer using Auth0 settings from configuration
+=======
+        
+        // [TODO] Use Ocelot or YARP, and add the necessary configurations here.
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowNextJs", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000") // Next.js frontend URL
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
+        
+        builder.Services.AddReverseProxy()
+            .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+        
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -145,11 +169,20 @@ public class Program
         {
             app.UseDeveloperExceptionPage();
         }
+<<<<<<< HEAD
 
         app.UseRouting();
 
         app.UseCors("CorsPolicy");
 
+=======
+        
+        // app.UseHttpsRedirection();
+        
+        app.UseCors("AllowNextJs");
+        
+        // The order of these is critical
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -178,9 +211,12 @@ public class Program
         app.MapHealthChecks("/health");
 
         app.MapControllers();
+<<<<<<< HEAD
 
         // Map the reverse proxy last so controller routes (health, gateway endpoints)
         // take precedence over proxied routes.
+=======
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
         app.MapReverseProxy();
     }
 }

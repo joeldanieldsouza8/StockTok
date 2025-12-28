@@ -52,6 +52,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+<<<<<<< HEAD
   # -----------------------------------------
   # Market Data Service (Python/FastAPI)
   # -----------------------------------------
@@ -114,3 +115,49 @@ services:
 
 volumes:
   userdb_data:
+=======
+  frontend:
+    build: 
+      context: ./
+      dockerfile: frontend/Dockerfile
+    container_name: stocktok-frontend
+    ports:
+      - "3000:3000" 
+    depends_on:
+      social-service:
+        condition: service_started
+    restart: unless-stopped
+
+  user-db:
+    image: postgres:latest
+    container_name: user-db-container
+    environment:
+      POSTGRES_USER: ${USER_DB_USER}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
+    ports:
+      - "${USER_DB_PORT}:5432"
+      
+  news-db:
+    image: postgres:latest
+    container_name: news-db-container
+    environment:
+      POSTGRES_USER: ${NEWS_DB_USER}
+      POSTGRES_PASSWORD: ${NEWS_DB_PASSWORD}
+      POSTGRES_DB: ${NEWS_DB_NAME}
+    ports:
+      - "${NEWS_DB_PORT}:5432"
+
+  posts-db:
+    image: postgres:latest
+    container_name: posts-db-container
+    environment:
+      POSTGRES_USER: ${POSTS_DB_USER}
+      POSTGRES_PASSWORD: ${POSTS_DB_PASSWORD}
+      POSTGRES_DB: ${POSTS_DB_NAME}
+    ports:
+      - "${POSTS_DB_PORT}:5432"
+
+volumes:
+  socialdb_data:
+>>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
