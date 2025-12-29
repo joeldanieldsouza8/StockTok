@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Posts.Data.Configurations;
+using Posts.Models;
+using Social.Models;
 
-namespace Social.Models
+
+namespace Social.Data
 {
     public class PostDBContext : DbContext
     {
@@ -13,6 +17,8 @@ namespace Social.Models
         }
 
         public DbSet<Post> Posts { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
 
         // validation
 
@@ -40,6 +46,9 @@ namespace Social.Models
                 .HasDefaultValueSql("NOW() AT TIME ZONE 'utc'");
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new PostEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CommentEntityTypeConfiguration());
         }
     }
 }

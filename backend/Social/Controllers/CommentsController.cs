@@ -19,8 +19,8 @@ public class CommentsController : ControllerBase
     }
     
     // GET: api/comments/post/{postId}
-    [HttpGet("post/{postId:guid}")]
-    public async Task<IActionResult> GetCommentsByPost(Guid postId)
+    [HttpGet("post/{postId:string}")]
+    public async Task<IActionResult> GetCommentsByPost(string postId)
     {
         var comments = await _commentsService.GetCommentsByPostIdAsync(postId);
         

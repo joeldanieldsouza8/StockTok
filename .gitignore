@@ -42,14 +42,13 @@ backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
-<<<<<<< HEAD
-=======
 backend/StockTok/appsettings.json
 backend/StockTok/appsettings.Development.json
+backend\Social\appsettings.json
+backend/Social/appsettings.json
+
 .vs
-backend/News/Migrations/
 .env
-backend/Social/Migrations
 
 .DS_Store
 backend/.DS_Store
@@ -59,7 +58,6 @@ appsettings.json
 appsettings.Development.json
 .env
 .env.local
->>>>>>> 3877d1fc5ff1d628dad9df22d36789fedf126675
 
 # Backend (For Mac)
 .DS_Store
