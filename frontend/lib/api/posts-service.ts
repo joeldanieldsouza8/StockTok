@@ -1,7 +1,7 @@
-import { auth0 } from "@/src/lib/auth0";
+import { auth0 } from "src/lib/auth0";
 
-import {NewsItem} from "@/lib/types/news-item";
-import {httpClient} from "@/lib/api/fetch-client";
+import {NewsArticle} from "lib/types/news-item";
+import {httpClient} from "lib/api/fetch-client";
 import { PostItem, PostItemObject } from "../types/post-item";
 import { Header } from "next/dist/lib/load-custom-routes";
 

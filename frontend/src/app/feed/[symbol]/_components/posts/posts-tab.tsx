@@ -1,4 +1,5 @@
-import { getAllPosts } from '@/lib/api/posts-service';
+import { getAllPosts } from 'lib/api/posts-service';
+
 import PostsFeed from './posts-feed';
 
 interface PostsTabProps {

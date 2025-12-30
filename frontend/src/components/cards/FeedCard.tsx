@@ -1,6 +1,6 @@
 import React from "react";
-import { NewsCard } from "@/src/features/news/components/NewsCard";
-import { FeedItem } from "@/src/types/feed";
+import { NewsCard } from "src/features/news/components/NewsCard";
+import { FeedItem } from "src/types/feed";
 
 interface FeedCardProps {
   item: FeedItem;

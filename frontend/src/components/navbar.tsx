@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "components/ui/button"
+import { Input } from "components/ui/input"
 import { Bell, Menu, Search, X, User, LogOut } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "components/ui/badge"
 import Link from "next/link"
 
 interface NavbarProps {

@@ -47,6 +47,22 @@ compose.override.yaml
 *.sqlite
 
 # Backend
+backend/User/appsettings.json
+backend\User\appsettings.json
+backend\News\appsettings.json
+backend/News/appsettings.json
+backend/StockTok/appsettings.json
+backend/StockTok/appsettings.Development.json
+backend\Social\appsettings.json
+backend/Social/appsettings.json
+
+.vs
+.env
+
+.DS_Store
+backend/.DS_Store
+
+env
 appsettings.json
 appsettings.Development.json
 .env

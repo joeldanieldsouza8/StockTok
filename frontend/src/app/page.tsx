@@ -1,18 +1,18 @@
-import { Navbar, Footer } from "@/components/layout";
-import {
-  HeroSection,
-  CommunitySection,
-  WatchlistSection,
-  FeaturesSection,
-} from "@/components/home";
-import { ChartPreview, MarketOverview } from "@/components/market";
-import { LoadingScreen } from "@/components/shared";
-import { auth0 } from "@/lib/auth0";
 import { FeedItem } from "../types/feed";
 import { getFeedByTickers } from "../services/FeedService";
 import { FeedCarousel } from "../components/cards/FeedCarousel";
 import { TopTickersResponse } from "../types/watchlist";
 import { getTopTickers } from "../services/WatchlistService";
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
+import { HeroSection } from "@/components/hero-section"
+import { CommunitySection } from "@/components/community-section"
+import { WatchlistSection } from "@/components/watchlist-section"
+import { FeaturesSection } from "@/components/features-section"
+import { ChartPreview } from "@/components/chart-preview"
+import { MarketOverview } from "@/components/market-overview"
+import { LoadingScreen } from "@/components/loading-screen"
+import { auth0 } from "@/lib/auth0"
 
 export default async function Home() {
   // Fetch session server-side

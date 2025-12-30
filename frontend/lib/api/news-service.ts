@@ -1,9 +1,9 @@
-import { auth0 } from "@/src/lib/auth0";
+import { auth0 } from "src/lib/auth0";
 
-import {NewsItem} from "@/lib/types/news-item";
-import {httpClient} from "@/lib/api/fetch-client";
+import {NewsArticle} from "lib/types/news-item";
+import {httpClient} from "lib/api/fetch-client";
 
-export async function getNewsBySymbol(symbol: string): Promise<NewsItem[]> {
+export async function getNewsBySymbol(symbol: string): Promise<NewsArticle[]> {
     const endpoint = `/api/news/${symbol}`
     
     const { token } = await auth0.getAccessToken();
@@ -16,7 +16,7 @@ export async function getNewsBySymbol(symbol: string): Promise<NewsItem[]> {
         }
     };
     
-    const news = await httpClient<NewsItem[]>(endpoint, options);
+    const news = await httpClient<NewsArticle[]>(endpoint, options);
     
     return news;
 }
