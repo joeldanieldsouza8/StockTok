@@ -5,34 +5,34 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Posts.Data;
+using Social.Data;
 
 #nullable disable
 
-namespace Posts.Migrations
+namespace Social.Migrations
 {
-    [DbContext(typeof(PostsDbContext))]
-    [Migration("20251223121404_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(PostDBContext))]
+    [Migration("20251229145415_SocialDBCreate")]
+    partial class SocialDBCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.0-preview.7.24405.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Posts.Models.Comment", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -41,8 +41,9 @@ namespace Posts.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("PostId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -54,38 +55,43 @@ namespace Posts.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Posts.Models.Post", b =>
+            modelBuilder.Entity("Social.Models.Post", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ticker")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("time_created")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'utc'");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Body")
+                    b.Property<string>("username")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Posts.Models.Comment", b =>
                 {
-                    b.HasOne("Posts.Models.Post", "Post")
-                        .WithMany("Comments")
+                    b.HasOne("Social.Models.Post", "Post")
+                        .WithMany("comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -93,9 +99,9 @@ namespace Posts.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Posts.Models.Post", b =>
+            modelBuilder.Entity("Social.Models.Post", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("comments");
                 });
 #pragma warning restore 612, 618
         }

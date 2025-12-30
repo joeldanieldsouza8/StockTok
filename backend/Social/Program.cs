@@ -1,69 +1,66 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
-using Social.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Posts.Data;
+using Posts.Hubs;
+using Posts.Services;
+using Social.Data;
 
-namespace Social
+namespace Social;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        ConfigureServices(builder);
+
+        var app = builder.Build();
+
+        ConfigureMiddleware(app);
+
+        app.Run();
+    }
+
+    private static void ConfigureServices(WebApplicationBuilder builder)
+    {
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+
+        services.AddDbContext<PostDBContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("SocialDB")));
+
+        services.AddScoped<PostsService>();
+        services.AddScoped<CommentsService>();
+
+        services.AddSignalR();
+
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
+
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+    }
+
+    private static void ConfigureMiddleware(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-            // Add CORS services
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
-                    policy.WithOrigins("http://localhost:3000")
-                        .AllowAnyHeader()  
-                        .AllowAnyMethod()   
-                        .AllowCredentials();
-                });
-            });
-
-            // Add services to the container.
-
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-            builder.Services.AddDbContext<PostDBContext>(options =>
-            {
-                options.UseNpgsql(connectionString);
-            });
-
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
-            var app = builder.Build();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider
-                    .GetRequiredService<PostDBContext>(); 
-
-                // This command applies any pending migrations and creates the schema
-                dbContext.Database.Migrate();
-            }
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
-
-            //app.UseHttpsRedirection();
-
-            app.UseCors(MyAllowSpecificOrigins); // IMPORTANT
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
+        // app.UseHttpsRedirection();
+
+        // The order of these is critical
+        // app.UseAuthentication();
+        // app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.MapHub<CommentHub>("/hubs/comments");
     }
 }

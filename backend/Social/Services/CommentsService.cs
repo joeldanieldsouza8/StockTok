@@ -4,15 +4,16 @@ using Posts.Data;
 using Posts.DTOs.Comments;
 using Posts.Hubs;
 using Posts.Models;
+using Social.Data;
 
 namespace Posts.Services;
 
 public class CommentsService
 {
-    private readonly PostsDbContext _context;
+    private readonly PostDBContext _context;
     private readonly IHubContext<CommentHub> _hubContext;
 
-    public CommentsService(PostsDbContext context, IHubContext<CommentHub> hubContext)
+    public CommentsService(PostDBContext context, IHubContext<CommentHub> hubContext)
     {
         _context = context;
         _hubContext = hubContext;
@@ -22,7 +23,7 @@ public class CommentsService
     {
         // Verify that the post exists
         var postExists = await _context.Posts
-            .AnyAsync(p => p.Id == createCommentDto.PostId);
+            .AnyAsync(p => p.id == createCommentDto.PostId);
         
         // Guard clause
         if (!postExists)
@@ -33,7 +34,7 @@ public class CommentsService
         // Create the comment
         var newComment = new Comment
         {
-            Id = Guid.NewGuid(),
+            Id = createCommentDto.id,
             PostId = createCommentDto.PostId,
             Body = createCommentDto.Body,
             AuthorId = authorId, 
@@ -52,11 +53,11 @@ public class CommentsService
         return newCommentResponseDto;
     }
     
-    public async Task<List<CommentResponseDto>> GetCommentsByPostIdAsync(Guid postId)
+    public async Task<List<CommentResponseDto>> GetCommentsByPostIdAsync(string postid)
     {
         return await _context.Comments
             .AsNoTracking() 
-            .Where(c => c.PostId == postId)
+            .Where(c => c.PostId == postid)
             .OrderByDescending(c => c.CreatedAt) 
             .Select(c => new CommentResponseDto
             {
