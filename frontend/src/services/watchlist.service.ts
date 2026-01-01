@@ -6,7 +6,7 @@ import {
   TopTickersResponse,
 } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5069";
+const API_BASE_URL = process.env.BACKEND_API_URL || "http://localhost:5069";
 
 export const watchlistService = {
   /**
