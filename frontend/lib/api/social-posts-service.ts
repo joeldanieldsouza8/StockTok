@@ -6,7 +6,18 @@ import { PostItem, PostItemObject } from "../types/post-item";
 import { Header } from "next/dist/lib/load-custom-routes";
 
 
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || ""
+const getBaseUrl = () => {
+  // If we are in the browser (Client Side)
+  if (typeof window !== 'undefined') {
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5069";
+  }
+
+  // If we are on the server (Server Side / Docker SSR)
+  // Inside Docker, the frontend must call the gateway service name
+  return process.env.BACKEND_API_URL || "http://api-gateway:8080";
+};
+
+const BACKEND_BASE_URL = getBaseUrl();
 
 
 
@@ -48,16 +59,46 @@ export async function createPost(post: PostItemObject): Promise<PostItem> {
 }
 
 
+
+
+// export async function getAllPosts(): Promise<PostItem[]> {
+//   const response = await fetch(`${BACKEND_BASE_URL}/api/posts`, {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   });
+
+//   if (!response.ok) {
+//     throw new Error('Failed to fetch posts');
+//   }
+
+//   return response.json();
+// }
+
 export async function getAllPosts(): Promise<PostItem[]> {
-  const response = await fetch(`${BACKEND_BASE_URL}/api/posts`, {
-    method: 'GET',
+  // Much cleaner! No need for local getBaseUrl() here anymore
+  return await httpClient<PostItem[]>("/api/posts", {
+    method: 'GET'
+  });
+}
+
+
+export async function addComment(postId: string, content: string): Promise<PostItem> {
+  const response = await fetch(`${BACKEND_BASE_URL}/api/comments`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({
+      postId,
+      content,
+    }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch posts');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(errorData.error || 'Failed to add comment');
   }
 
   return response.json();

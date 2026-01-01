@@ -39,15 +39,15 @@ services:
     ports:
       - "${NEWS_DB_PORT}:5432"
 
-  posts-db:
+  social-db:
     image: postgres:latest
-    container_name: posts-db-container
+    container_name: social-db-container
     environment:
-      POSTGRES_USER: ${POSTS_DB_USER}
-      POSTGRES_PASSWORD: ${POSTS_DB_PASSWORD}
-      POSTGRES_DB: ${POSTS_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_SOCIAL_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_SOCIAL_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_SOCIAL_DB}
     ports:
-      - "${POSTS_DB_PORT}:5432"
+      - "${POSTGRES_DB_PORT}:5432"
 
   # -----------------------------------------
   # User Service (.NET)
@@ -70,6 +70,27 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+    # -----------------------------------------
+  # Social Service (Posts and News) (.NET)
+  social-service:
+    build:
+      context: .
+      dockerfile: backend/Social/Dockerfile # Adjust path to your actual Dockerfile
+    container_name: stocktok-social-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__SocialDB=${SOCIAL_DB_CONNECTION}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+    ports:
+      - "5169:8080" # Mapping to a different port than User Service
+    depends_on:
+      social-db:
+        condition: service_started
+    restart: unless-stopped
+  # -----------------------------------------
+
   # -----------------------------------------
   # Market Data Service (Python/FastAPI)
   # -----------------------------------------
@@ -81,6 +102,8 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+
+  
 
   # -----------------------------------------
   # API Gateway (.NET / YARP)
@@ -97,11 +120,13 @@ services:
       - Auth0__Audience=${AUTH0_AUDIENCE}
       - ReverseProxy__Clusters__userCluster__Destinations__user1__Address=http://user-service:8080/
       - ReverseProxy__Clusters__marketCluster__Destinations__market1__Address=http://market-service:8000/
+      - ReverseProxy__Clusters__socialCluster__Destinations__social1__Address=http://social-service:8080/
     ports:
       - "5069:8080"
     depends_on:
       - user-service
       - market-service
+      - social-service
     restart: unless-stopped
 
   # -----------------------------------------
@@ -112,9 +137,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - BACKEND_API_URL=http://localhost:5069
+        # Use localhost for Client-Side (Browser) fetches
+        - NEXT_PUBLIC_API_URL=http://localhost:5069
     container_name: stocktok-frontend
     environment:
+      - BACKEND_API_URL=http://api-gateway:8080 
       - AUTH0_SECRET=${AUTH0_SECRET}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
       - APP_BASE_URL=http://localhost:3000

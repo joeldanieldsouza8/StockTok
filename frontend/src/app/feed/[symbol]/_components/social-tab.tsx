@@ -28,20 +28,31 @@ export default function PostTab() {
   //STATE: for submission
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // STATE: for posts
-  const [posts, setPosts] = useState<PostItem[]>([
-    {  
-      id: "1JKFV",
-      username: "MathBoy122",
-      title: "NVDA rockets!",
-      description: "today NVDA started rocketing",
-      time_created: new Date(Date.now()),
-      ticker: "NVDA",
-      upvotes: 0,
-      downvotes: 0,
-      comments: 0
-    },
-  ]);
+// STATE: for posts
+const [posts, setPosts] = useState<PostItem[]>([
+  {  
+    id: "1JKFV",
+    username: "MathBoy122",
+    title: "NVDA rockets!",
+    description: "today NVDA started rocketing",
+    time_created: new Date(Date.now()),
+    ticker: "NVDA",
+    upvotes: 0,
+    downvotes: 0,
+    comments: [
+      {
+        username: "User123",
+        content: "not really",
+        time_created: new Date(Date.now()).toISOString()
+      },
+      {
+        username: "Trader456",
+        content: "oh",
+        time_created: new Date(Date.now()).toISOString()
+      }
+    ]
+  },
+]);
   
   const [isLoadingPosts, setIsLoadingPosts] = useState(true); 
 
@@ -110,7 +121,8 @@ export default function PostTab() {
       title: newPost.title.trim(),
       description: newPost.description.trim(),
       time_created: new Date().toISOString(),
-      ticker: newPost.ticker
+      ticker: newPost.ticker,
+      comments: []
     };
 
     console.log("payload:", payload);

@@ -12,8 +12,8 @@ using User.Data;
 namespace User.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20251212212806_WatchlistModels")]
-    partial class WatchlistModels
+    [Migration("20251221145351_AllLatestChanges")]
+    partial class AllLatestChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,4 +1,11 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+const getBaseUrl = () => {
+    if (typeof window !== 'undefined') {
+        return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5069";
+    }
+    return process.env.BACKEND_API_URL || "http://api-gateway:8080";
+};
+
+const BASE_URL = getBaseUrl();
 
 interface FetchOptions extends RequestInit {
     // You can add custom options here if needed

@@ -9,7 +9,7 @@ import { Input } from "components/ui/input"
 import { Label } from "components/ui/label"
 import { Textarea } from "components/ui/textarea"
 import { PostItem, PostItemObject } from 'lib/types/post-item';
-import { createPost } from 'lib/api/posts-service';
+import { createPost, addComment } from 'lib/api/social-posts-service';
 
 interface PostsFeedProps {
     symbol: string;
@@ -21,6 +21,9 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
     const router = useRouter();
 
     const [posts, setPosts] = useState<PostItem[]>(initialPosts);
+   
+    const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+    const [commentText, setCommentText] = useState("");
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showForm, setShowForm] = useState(false);
@@ -40,9 +43,7 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Auth Check
         if (!user) {
-            // Redirect to login or show modal
             alert("You must be logged in to post.");
             return;
         }
@@ -60,19 +61,49 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
             title: newPost.title.trim(),
             description: newPost.description.trim(),
             time_created: new Date().toISOString(),
-            ticker: symbol 
+            ticker: symbol,
+            comments: []
         };
 
         try {
             const createdPost = await createPost(payload);
-
             setPosts(prev => [createdPost, ...prev]);
-
             setNewPost({title: "", description: ""});
             setShowForm(false);
         } catch (err) {
             console.error(err);
             setError("Failed to create post.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // SIMPLIFIED: No need to fetch token manually
+    const handleAddComment = async (postId: string) => {
+        if (!user) {
+            console.error('User must be logged in to comment');
+            return;
+        }
+
+        if (!commentText.trim()) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            // Just call addComment - it will handle authentication internally
+            const updatedPost = await addComment(postId, commentText);
+            
+            // Update the specific post in the list with its new comment
+            setPosts(prev => prev.map(p => p.id === postId ? updatedPost : p));
+            
+            // Clear the comment text after successful submission
+            setCommentText("");
+        } catch (error) {
+            console.error('Error adding comment:', error);
+            setError('Failed to add comment. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -88,7 +119,6 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
 
     return (
         <div className="flex w-full max-w-2xl flex-col gap-6 mx-auto pb-10">
-
             {/* Create Post Section */}
             <div className='flex justify-end'>
                 <Button onClick={() => setShowForm(!showForm)} variant={showForm ? "outline" : "default"}>
@@ -130,18 +160,79 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
                             <div className="flex justify-between items-start mb-2">
                                 <p className="text-sm font-semibold text-blue-600">@{post.username}</p>
                                 <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-md font-mono">
-                    ${post.ticker}
-                  </span>
+                                    ${post.ticker}
+                                </span>
                             </div>
                             <CardTitle className="text-lg mb-2">{post.title}</CardTitle>
                             <p className="text-sm text-foreground/80 mb-4 whitespace-pre-wrap">{post.description}</p>
-
-                            <div className="flex justify-between items-end border-t pt-2 mt-2">
-                                {/* Placeholder for Upvote/Comment buttons (Next Task) */}
+                            
+                            {/* Comment Section */}
+                            <div className="flex flex-col gap-3 mt-4 border-t pt-4">
                                 <div className="flex gap-4">
-                                    {/* Your teammate will add buttons here */}
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="text-muted-foreground hover:text-blue-600 p-0 h-auto"
+                                        onClick={() => {
+                                            if (post.id) {
+                                                setExpandedPostId(expandedPostId === post.id ? null : post.id);
+                                                setCommentText(""); 
+                                            }
+                                        }}
+                                    >
+                                        💬 {post.comments?.length || 0} Comments
+                                    </Button>
                                 </div>
 
+                                {expandedPostId === post.id && (
+                                    <div className="flex flex-col gap-3 pl-4 border-l-2 border-muted animate-in fade-in duration-200">
+                                        {/* List Existing Comments */}
+                                        {post.comments?.map((comment, idx) => (
+                                            <div key={idx} className="bg-muted/50 p-2 rounded-lg text-sm">
+                                                <p className="font-semibold text-xs text-blue-600">@{comment.username}</p>
+                                                <p>{comment.content}</p>
+                                            </div>
+                                        ))}
+
+                                        {/* Auth-Protected Input Section */}
+                                        {user ? (
+                                            <div className="flex gap-2 mt-2">
+                                                <Input 
+                                                    placeholder="Write a comment..." 
+                                                    value={commentText}
+                                                    onChange={(e) => setCommentText(e.target.value)}
+                                                    className="h-8 text-sm"
+                                                    disabled={isSubmitting}
+                                                />
+                                                <Button 
+                                                    size="sm" 
+                                                    className="h-8" 
+                                                    onClick={() => post.id && handleAddComment(post.id)}
+                                                    disabled={isSubmitting || !commentText.trim()}
+                                                >
+                                                    {isSubmitting ? "..." : "Comment"}
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-2 p-2 bg-muted/30 rounded border border-dashed">
+                                                <p className="text-xs text-muted-foreground italic">
+                                                    Please <span 
+                                                        className="text-blue-600 font-semibold underline cursor-pointer hover:text-blue-800" 
+                                                        onClick={() => router.push('/api/auth/login')}
+                                                    >
+                                                        log in
+                                                    </span> to join the conversation.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-between items-end border-t pt-2 mt-2">
+                                <div className="flex gap-4">
+                                    {/* Placeholder for Upvote/Comment buttons */}
+                                </div>
                                 <div className="text-xs text-muted-foreground text-right">
                                     {formatDateTime(post.time_created).dateFormatted} <br/>
                                     {formatDateTime(post.time_created).timeFormatted}
@@ -156,5 +247,5 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
                 )}
             </div>
         </div>
-    )
+    );
 }

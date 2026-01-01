@@ -1,4 +1,4 @@
-import { getAllPosts } from 'lib/api/posts-service';
+import { getAllPosts } from 'lib/api/social-posts-service';
 
 import PostsFeed from './posts-feed';
 
