@@ -2,22 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Button } from "components/ui/button"
-import { Input } from "components/ui/input"
-import { Bell, Menu, Search, X, User, LogOut } from "lucide-react"
-import { Badge } from "components/ui/badge"
-import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Bell, Menu, Search, X } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
-interface NavbarProps {
-  user: {
-    name?: string
-    email?: string
-    picture?: string
-    nickname?: string
-  } | null
-}
-
-export function Navbar({ user }: NavbarProps) {
+export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -96,36 +86,10 @@ export function Navbar({ user }: NavbarProps) {
 
               {/* Auth Buttons */}
               <div className="hidden sm:flex items-center gap-2">
-                {user ? (
-                  <>
-                    <Link href="/dashboard">
-                      <Button variant="ghost" size="sm" className="gap-2">
-                        {user.picture ? (
-                          <img src={user.picture} alt={user.name || "User"} className="size-6 rounded-full" />
-                        ) : (
-                          <User className="size-4" />
-                        )}
-                        <span className="hidden md:inline">{user.name || user.nickname || "Dashboard"}</span>
-                      </Button>
-                    </Link>
-                    <Link href="/auth/logout">
-                      <Button variant="ghost" size="icon">
-                        <LogOut className="size-4" />
-                      </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/auth/login?returnTo=/dashboard">
-                      <Button variant="ghost" size="sm">
-                        Sign In
-                      </Button>
-                    </Link>
-                    <Link href="/auth/login?returnTo=/onboarding">
-                      <Button size="sm">Get Started</Button>
-                    </Link>
-                  </>
-                )}
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+                <Button size="sm">Get Started</Button>
               </div>
 
               {/* Mobile Menu Toggle */}
@@ -163,34 +127,10 @@ export function Navbar({ user }: NavbarProps) {
               Docs
             </a>
             <div className="flex gap-2 pt-4 border-t">
-              {user ? (
-                <>
-                  <Link href="/dashboard" className="flex-1">
-                    <Button variant="outline" className="w-full bg-transparent gap-2">
-                      {user.picture ? (
-                        <img src={user.picture} alt={user.name || "User"} className="size-5 rounded-full" />
-                      ) : (
-                        <User className="size-4" />
-                      )}
-                      Dashboard
-                    </Button>
-                  </Link>
-                  <Link href="/auth/logout" className="flex-1">
-                    <Button className="w-full">Log Out</Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login?returnTo=/dashboard" className="flex-1">
-                    <Button variant="outline" className="w-full bg-transparent">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/auth/login?returnTo=/onboarding" className="flex-1">
-                    <Button className="w-full">Get Started</Button>
-                  </Link>
-                </>
-              )}
+              <Button variant="outline" className="flex-1 bg-transparent">
+                Sign In
+              </Button>
+              <Button className="flex-1">Get Started</Button>
             </div>
           </nav>
         </motion.div>

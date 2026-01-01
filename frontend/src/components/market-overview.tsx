@@ -1,9 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card } from "components/ui/card"
+import { Card } from "@/components/ui/card"
 import { TrendingUp, TrendingDown, Plus } from "lucide-react"
-import { Button } from "components/ui/button"
+import { Button } from "@/components/ui/button"
 
 const marketData = [
   {

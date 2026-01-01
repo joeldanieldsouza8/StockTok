@@ -122,6 +122,7 @@ services:
       - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_SCOPE=openid profile email
+      - BACKEND_API_URL=http://api-gateway:8080 # must be added as runtime env var for auth to work
     ports:
       - "3000:3000"
     depends_on:

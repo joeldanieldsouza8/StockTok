@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card } from "components/ui/card"
-import { Badge } from "components/ui/badge"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Bell, Target } from "lucide-react"
 
 const watchlistItems = [
