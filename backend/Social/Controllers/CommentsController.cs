@@ -8,7 +8,6 @@ namespace Posts.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class CommentsController : ControllerBase
 {
     private readonly CommentsService _commentsService;
@@ -19,7 +18,7 @@ public class CommentsController : ControllerBase
     }
     
     // GET: api/comments/post/{postId}
-    [HttpGet("post/{postId:string}")]
+    [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetCommentsByPost(string postId)
     {
         var comments = await _commentsService.GetCommentsByPostIdAsync(postId);
@@ -40,8 +39,8 @@ public class CommentsController : ControllerBase
         }
         
         var newComment = await _commentsService.CreateCommentAsync(createCommentDto, userId);
-        
-        return CreatedAtAction(nameof(GetCommentsByPost), new { id = newComment.Id }, newComment);
+
+        return CreatedAtAction(nameof(GetCommentsByPost), new { postId = newComment.PostId }, newComment);
     }
 
     // PUT: api/comments/{id}
