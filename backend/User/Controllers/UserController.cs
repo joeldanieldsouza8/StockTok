@@ -109,6 +109,14 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> HandleLogin()
     {
+        _logger.LogInformation("=== HandleLogin endpoint HIT ===");  // Add this first
+    
+        // Log all claims to debug
+        foreach (var claim in User.Claims)
+        {
+            _logger.LogInformation("Claim: {Type} = {Value}", claim.Type, claim.Value);
+        }
+
         try
         {
             var auth0SubjectId = User.FindFirst("sub")?.Value 
