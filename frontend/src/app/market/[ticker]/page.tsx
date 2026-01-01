@@ -51,17 +51,17 @@ export default function MarketPage() {
     return <div className="p-10 text-red-500">Ticker not found.</div>;
 
   return (
-    <main className="min-h-screen bg-black p-8">
-      {/* 1. The Chart Section */}
-      <div className="w-full bg-gray-900 rounded-lg mb-8 border border-gray-800 overflow-hidden">
-        {history.length > 0 ? (
-          <StockChart data={history} />
-        ) : (
-          <div className="h-[400px] flex items-center justify-center text-gray-500">
-            No chart data available
+      <main className="min-h-screen bg-black p-8">
+          {/* The Chart Section - now with ticker prop for infinite scroll */}
+          <div className="w-full bg-gray-900 rounded-lg mb-8 border border-gray-800 overflow-hidden">
+              {history.length > 0 ? (
+                  <StockChart data={history} ticker={ticker} />
+              ) : (
+                  <div className="h-[400px] flex items-center justify-center text-gray-500">
+                      No chart data available
+                  </div>
+              )}
           </div>
-        )}
-      </div>
 
       {/* 2. The Fundamentals Section */}
       <FundamentalsDisplay data={fundamentals} />
