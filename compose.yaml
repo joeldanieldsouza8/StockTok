@@ -1,12 +1,3 @@
-# ===========================================
-# StockTok Development Environment
-# ===========================================
-# Usage:
-#   docker compose up -d          # Start all services
-#   docker compose logs -f        # View logs
-#   docker compose down           # Stop all services
-# ===========================================
-
 services:
   # -----------------------------------------
   # PostgreSQL Databases
@@ -30,7 +21,7 @@ services:
     restart: unless-stopped
 
   news-db:
-    image: postgres:latest
+    image: postgres:16-alpine # Switched to alpine for consistency
     container_name: news-db-container
     environment:
       POSTGRES_USER: ${NEWS_DB_USER}
@@ -38,9 +29,12 @@ services:
       POSTGRES_DB: ${NEWS_DB_NAME}
     ports:
       - "${NEWS_DB_PORT}:5432"
+    # Added volume persistence for news-db
+    volumes:
+      - newsdb_data:/var/lib/postgresql/data
 
   social-db:
-    image: postgres:latest
+    image: postgres:16-alpine
     container_name: social-db-container
     environment:
       POSTGRES_USER: ${POSTGRES_SOCIAL_USER}
@@ -48,9 +42,12 @@ services:
       POSTGRES_DB: ${POSTGRES_SOCIAL_DB}
     ports:
       - "${POSTGRES_DB_PORT}:5432"
+    # FIXED: Assigned socialdb_data volume
+    volumes:
+      - socialdb_data:/var/lib/postgresql/data
 
   # -----------------------------------------
-  # User Service (.NET)
+  # .NET Services
   # -----------------------------------------
   user-service:
     build:
@@ -70,12 +67,10 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-    # -----------------------------------------
-  # Social Service (Posts and News) (.NET)
   social-service:
     build:
       context: .
-      dockerfile: backend/Social/Dockerfile # Adjust path to your actual Dockerfile
+      dockerfile: backend/Social/Dockerfile
     container_name: stocktok-social-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -84,16 +79,11 @@ services:
       - Auth0__Domain=${AUTH0_DOMAIN}
       - Auth0__Audience=${AUTH0_AUDIENCE}
     ports:
-      - "5169:8080" # Mapping to a different port than User Service
+      - "5169:8080"
     depends_on:
-      social-db:
-        condition: service_started
+      - social-db
     restart: unless-stopped
-  # -----------------------------------------
 
-  # -----------------------------------------
-  # Market Data Service (Python/FastAPI)
-  # -----------------------------------------
   market-service:
     build:
       context: backend/MarketDataService
@@ -103,11 +93,6 @@ services:
       - "8000:8000"
     restart: unless-stopped
 
-  
-
-  # -----------------------------------------
-  # API Gateway (.NET / YARP)
-  # -----------------------------------------
   api-gateway:
     build:
       context: .
@@ -137,18 +122,17 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Use localhost for Client-Side (Browser) fetches
         - NEXT_PUBLIC_API_URL=http://localhost:5069
     container_name: stocktok-frontend
     environment:
-      - BACKEND_API_URL=http://api-gateway:8080 
+      - BACKEND_API_URL=http://api-gateway:8080
       - AUTH0_SECRET=${AUTH0_SECRET}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}
       - APP_BASE_URL=http://localhost:3000
       - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
       - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
-      - AUTH0_SCOPE=openid profile email
+      - AUTH0_SCOPE=openid profile email offline_access
     ports:
       - "3000:3000"
     depends_on:
@@ -158,3 +142,4 @@ services:
 volumes:
   userdb_data:
   socialdb_data:
+  newsdb_data:

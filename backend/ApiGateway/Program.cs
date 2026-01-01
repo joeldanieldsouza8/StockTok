@@ -1,15 +1,3 @@
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-
 namespace ApiGateway;
 
 public class Program
@@ -18,10 +6,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder);
-
         var app = builder.Build();
         ConfigureMiddleware(app);
-
         app.Run();
     }
 
@@ -30,7 +16,6 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        // Configure CORS to allow the Frontend to communicate with the Gateway
         services.AddCors(options =>
         {
             options.AddPolicy("AllowNextJs", policy =>
@@ -42,46 +27,42 @@ public class Program
             });
         });
 
-        // Configure JWT Bearer using Auth0 settings
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var authority = configuration["Auth0:Authority"];
-                if (string.IsNullOrEmpty(authority))
+                // Prioritize Auth0:Authority, fall back to Auth0:Domain
+                var authority = configuration["Auth0:Authority"] ?? configuration["Auth0:Domain"];
+                
+                if (!string.IsNullOrEmpty(authority) && !authority.StartsWith("https://"))
                 {
-                    var domain = configuration["Auth0:Domain"];
-                    if (!string.IsNullOrEmpty(domain))
-                    {
-                        authority = domain.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                            ? domain
-                            : $"https://{domain}/";
-                    }
+                    authority = $"https://{authority}/";
                 }
 
                 options.Authority = authority;
                 options.Audience = configuration["Auth0:Audience"];
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = ClaimTypes.NameIdentifier
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    ValidateIssuer = true,
+                    ValidateAudience = true
                 };
 
                 options.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = ctx =>
                     {
-                        Console.WriteLine($"Jwt auth failed: {ctx.Exception?.Message}");
+                        Console.WriteLine($"[Gateway] Jwt auth failed: {ctx.Exception?.Message}");
                         return Task.CompletedTask;
                     },
                     OnTokenValidated = ctx =>
                     {
-                        Console.WriteLine("Jwt auth succeeded for: " + ctx.Principal?.FindFirst("sub")?.Value);
+                        Console.WriteLine($"[Gateway] Jwt auth succeeded for: {ctx.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value}");
                         return Task.CompletedTask;
                     }
                 };
             });
 
-        // Add YARP reverse proxy
         services.AddReverseProxy()
                 .LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
@@ -98,35 +79,34 @@ public class Program
         }
 
         app.UseRouting();
-
-        // Use the specific Next.js CORS policy
         app.UseCors("AllowNextJs");
 
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // Selective Authentication Middleware
-        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy" };
+        var protectedPrefixes = new[] { 
+            "/api/users", 
+            "/api/watchlists", 
+            "/api/comments", 
+            "/api/posts",
+            "/dummy" 
+        };
 
         app.Use(async (context, next) =>
         {
             var path = context.Request.Path;
             var requiresAuth = protectedPrefixes.Any(p => path.StartsWithSegments(p, StringComparison.OrdinalIgnoreCase));
-            if (requiresAuth)
+            
+            if (requiresAuth && context.User?.Identity?.IsAuthenticated != true)
             {
-                if (context.User?.Identity?.IsAuthenticated != true)
-                {
-                    await context.ChallengeAsync();
-                    return;
-                }
+                await context.ChallengeAsync();
+                return;
             }
             await next();
         });
 
         app.MapHealthChecks("/health");
         app.MapControllers();
-        
-        // Map YARP last
         app.MapReverseProxy();
     }
 }

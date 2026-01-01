@@ -31,11 +31,9 @@ export default async function HealthPage() {
       </section>
 
       <hr style={{ margin: "1rem 0" }} />
-
-      {/* API Tester */}
       <section>
         <h2>API Health Tests</h2>
-        <DummyApiTester />
+        <p>API health tests available via backend endpoints.</p>
       </section>
 
       <hr style={{ margin: "1rem 0" }} />

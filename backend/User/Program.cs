@@ -41,6 +41,13 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
         
+        Console.WriteLine("===========================================");
+        Console.WriteLine("[UserService] STARTUP CONFIG DEBUG:");
+        Console.WriteLine($"[UserService] Auth0:Authority = '{configuration["Auth0:Authority"]}'");
+        Console.WriteLine($"[UserService] Auth0:Domain = '{configuration["Auth0:Domain"]}'");
+        Console.WriteLine($"[UserService] Auth0:Audience = '{configuration["Auth0:Audience"]}'");
+        Console.WriteLine("===========================================");
+        
         // Database
         services.AddDbContext<UserDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));

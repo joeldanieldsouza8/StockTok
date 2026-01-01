@@ -49,6 +49,8 @@ backend/Social/appsettings.json
 
 .vs
 .env
+# Ignore environment files for services (local secrets)
+backend/User/.env
 
 .DS_Store
 backend/.DS_Store

@@ -1,6 +1,6 @@
 //This component fetch then displays fundamental data for a given stock ticker.
 
-import { TickerFundamentalData } from "src/types/market";
+import { TickerFundamentalData } from "@/types/market";
 
 // A small helper component for a single row of data
 const DataRow = ({
