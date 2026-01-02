@@ -121,7 +121,7 @@ export default function MarketsPage() {
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {MARKET_INDICES.map((index) => (
-                            <Link key={index.symbol} href={`/market/${encodeURIComponent(index.symbol)}`}>
+                            <Link key={index.symbol} href={`/market/${index.symbol}`}>
                                 <Card className="p-4 hover:border-primary/50 transition-all cursor-pointer group">
                                     <div className="text-xs text-muted-foreground mb-1">{index.displaySymbol}</div>
                                     <div className="font-semibold group-hover:text-primary transition-colors">

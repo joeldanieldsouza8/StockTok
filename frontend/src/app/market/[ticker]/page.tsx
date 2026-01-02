@@ -16,7 +16,9 @@ function useParams(): { ticker?: string } {
     useEffect(() => {
         if (typeof window === "undefined") return;
         const parts = window.location.pathname.split("/").filter(Boolean);
-        const ticker = parts.length ? parts[parts.length - 1] : undefined;
+        // Decode URL component to handle special characters like ^ in indices (^DJI, ^GSPC)
+        const rawTicker = parts.length ? parts[parts.length - 1] : undefined;
+        const ticker = rawTicker ? decodeURIComponent(rawTicker) : undefined;
         setParams({ ticker });
     }, []);
 

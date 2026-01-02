@@ -76,9 +76,16 @@ async def get_ticker_fundamentals(ticker: str):
 
         #check if we got data
 
-        if not info or info.get('quoteType') == 'NONE' or not info.get('marketCap'):
+        if not info or info.get('quoteType') == 'NONE':
             raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
 
+        # For regular stocks, verify they have market data
+        # Indices (quoteType='INDEX') won't have marketCap but are still valid
+        quote_type = info.get('quoteType', '')
+        is_index = quote_type == 'INDEX'
+
+        if not is_index and not info.get('marketCap') and not info.get('regularMarketPrice'):
+            raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
  #  Perform  the necessary Calculations 
         net_debt = None
         net_debt_to_ebitda = None
