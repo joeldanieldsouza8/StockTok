@@ -34,7 +34,8 @@ export interface TickerFundamentalData {
   marketData: MarketData;
   capitalStructure: CapitalStructure;
   valuation: Valuation;
-  // Add efficiency and growth here if you want
+  efficiency?: Efficiency; 
+  growth?: Growth;          
 }
 
 export interface OHLCPoint {
@@ -44,4 +45,15 @@ export interface OHLCPoint {
   low: number;
   close: number;
   volume: number;
+}
+
+export interface Efficiency {
+    "LTM Gross Margin": number | null;
+    "LTM EBIT Margin": number | null;
+    "LTM ROE": number | null;
+}
+
+export interface Growth {
+    "LTM Rev. Growth": number | null;
+    "LTM EPS Growth": number | null;
 }
