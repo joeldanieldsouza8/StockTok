@@ -39,9 +39,9 @@ public class PostsService
         // Map the post from the entity type to the dto type
         var newPostDto = MapToDto(newPost);
         
-        // Add the post to the group
-        await _hubContext.Clients.Group($"TICKER_{createPostDto.Ticker}")
-            .SendAsync("ReceiveNewPost", newPostDto);
+        // // Add the post to the group
+        // await _hubContext.Clients.Group($"TICKER_{createPostDto.Ticker}")
+        //     .SendAsync("ReceiveNewPost", newPostDto);
         
         return newPostDto;
     }
@@ -94,8 +94,8 @@ public class PostsService
         
         var updatePostDto =  MapToDto(post);
         
-        await _hubContext.Clients.Group($"TICKER_{post.Ticker}")
-            .SendAsync("UpdatePost", updatePostDto);
+        // await _hubContext.Clients.Group($"TICKER_{post.Ticker}")
+        //     .SendAsync("UpdatePost", updatePostDto);
         
         return updatePostDto;
     }
@@ -122,9 +122,9 @@ public class PostsService
         _context.Posts.Remove(post);
         await _context.SaveChangesAsync();
         
-        // Notify the group
-        await _hubContext.Clients.Group($"TICKER_{ticker}")
-            .SendAsync("DeletePost", id);
+        // // Notify the group
+        // await _hubContext.Clients.Group($"TICKER_{ticker}")
+        //     .SendAsync("DeletePost", id);
         
         return true;
     }

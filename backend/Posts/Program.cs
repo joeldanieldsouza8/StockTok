@@ -55,8 +55,8 @@ public class Program
         // app.UseHttpsRedirection();
 
         // The order of these is critical
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
         

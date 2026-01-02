@@ -45,9 +45,9 @@ public class CommentsService
 
         var newCommentResponseDto = MapToDto(newComment);
         
-        // Notify the group
-        await _hubContext.Clients.Group($"POST_{createCommentDto.PostId}")
-            .SendAsync("ReceiveComment", newCommentResponseDto);
+        // // Notify the group
+        // await _hubContext.Clients.Group($"POST_{createCommentDto.PostId}")
+        //     .SendAsync("ReceiveComment", newCommentResponseDto);
 
         return newCommentResponseDto;
     }
@@ -92,8 +92,8 @@ public class CommentsService
         _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
 
-        await _hubContext.Clients.Group($"POST_{postId}")
-            .SendAsync("DeleteComment", commentId);
+        // await _hubContext.Clients.Group($"POST_{postId}")
+        //     .SendAsync("DeleteComment", commentId);
 
         return true;
     }
@@ -124,8 +124,8 @@ public class CommentsService
         var updatedCommentDto = MapToDto(existingComment);
         
         // Notify the group
-        await _hubContext.Clients.Group($"POST_{existingComment.PostId}")
-            .SendAsync("UpdateComment", updatedCommentDto);
+        // await _hubContext.Clients.Group($"POST_{existingComment.PostId}")
+        //     .SendAsync("UpdateComment", updatedCommentDto);
 
         return updatedCommentDto;
     }
