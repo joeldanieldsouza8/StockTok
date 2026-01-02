@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { auth0 } from "../lib/auth0";
 
 export default function DummyApiTester() {
   const [message, setMessage] = useState<string>("");

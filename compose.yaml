@@ -127,10 +127,10 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - Auth0__Domain=${AUTH0_DOMAIN}
       - Auth0__Audience=${AUTH0_AUDIENCE}
-      - ReverseProxy__Clusters__user-cluster__Destinations__user1__Address=http://user-service:8080/
-      - ReverseProxy__Clusters__market-cluster__Destinations__market1__Address=http://market-service:8000/
-      - ReverseProxy__Clusters__social-cluster__Destinations__social1__Address=http://social-service:8080/
-      - ReverseProxy__Clusters__news-cluster__Destinations__news1__Address=http://news-service:8080/    
+      - ReverseProxy__Clusters__user-cluster__Destinations__destination1__Address=http://user-service:8080/
+      - ReverseProxy__Clusters__market-cluster__Destinations__destination1__Address=http://market-service:8000/
+      - ReverseProxy__Clusters__social-cluster__Destinations__destination1__Address=http://social-service:8080/
+      - ReverseProxy__Clusters__news-cluster__Destinations__destination1__Address=http://news-service:8080/    
     ports:
       - "5069:8080"
     depends_on:
