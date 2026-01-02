@@ -82,43 +82,6 @@ namespace News.Migrations
 
                     b.HasIndex("ArticleID");
 
-                    b.ToTable("NewsArticleEntity", "News");
-                });
-
-            modelBuilder.Entity("News.Models.NewsArticleEntity", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ArticleID")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Industry")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NewsArticleUuid")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("NewsArticleUuid");
-
                     b.ToTable("NewsArticleEntities", "News");
                 });
 
@@ -127,17 +90,6 @@ namespace News.Migrations
                     b.HasOne("News.Models.NewsArticle", "NewsArticle")
                         .WithMany("NewsArticleEntities")
                         .HasForeignKey("ArticleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NewsArticle");
-                });
-
-            modelBuilder.Entity("News.Models.NewsArticleEntity", b =>
-                {
-                    b.HasOne("News.Models.NewsArticle", "NewsArticle")
-                        .WithMany()
-                        .HasForeignKey("NewsArticleUuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
