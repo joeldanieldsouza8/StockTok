@@ -1,4 +1,3 @@
-'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs"
 import NewsTab from "@/app/feed/[symbol]/_components/news/news-tab";
