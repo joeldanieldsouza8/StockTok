@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Posts.Services;
 using Social.Data;
@@ -11,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace Social.Controllers
 {
+    [ApiController]
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/posts")]
-    [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly PostDBContext _context;

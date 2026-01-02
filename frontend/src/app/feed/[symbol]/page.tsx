@@ -1,16 +1,18 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs"
+'use client';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs"
 import NewsTab from "@/app/feed/[symbol]/_components/news/news-tab";
 import PostsTab from "@/app/feed/[symbol]/_components/posts/posts-tab";
+import { use } from 'react'; // Import the use hook
 
 interface FeedPageProps {
     params: Promise<{symbol: string}>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function FeedPage({ params }: FeedPageProps) {
-    const { symbol } = await params;
-
+export default function FeedPage({ params }: FeedPageProps) {
+    // Use the 'use' hook to unwrap the promise in client component
+    const { symbol } = use(params);
     const upperSymbol = symbol.toUpperCase();
     
     return (

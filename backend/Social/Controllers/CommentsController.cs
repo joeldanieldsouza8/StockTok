@@ -8,6 +8,7 @@ namespace Posts.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CommentsController : ControllerBase
 {
     private readonly CommentsService _commentsService;

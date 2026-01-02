@@ -122,7 +122,7 @@ AUTH0_ISSUER_BASE_URL=https://your-tenant.auth0.com
 AUTH0_CLIENT_ID=your-client-id
 AUTH0_CLIENT_SECRET=your-client-secret
 AUTH0_AUDIENCE=your-api-audience
-NEXT_PUBLIC_API_URL=http://localhost:5000
+BACKEND_API_URL=http://localhost:5000
 ```
 
 ### User Service (`backend/User/appsettings.json`)

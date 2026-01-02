@@ -1,6 +1,7 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using News.Models;
+using System.Reflection;
+using static News.Models.NewsArticle;
 
 namespace News.Data;
 
@@ -17,6 +18,9 @@ public class NewsDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.HasDefaultSchema("News");
+
+        modelBuilder.Entity<NewsArticleEntity>()
+        .ToTable("NewsArticleEntities");
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

@@ -1,45 +1,50 @@
+import { auth0 } from "src/lib/auth0";
+
 const getBaseUrl = () => {
     if (typeof window !== 'undefined') {
-        return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5069";
+        return process.env.BACKEND_API_URL || "http://localhost:5069";
     }
     return process.env.BACKEND_API_URL || "http://api-gateway:8080";
 };
 
 const BASE_URL = getBaseUrl();
 
-interface FetchOptions extends RequestInit {
-    // You can add custom options here if needed
-}
+interface FetchOptions extends RequestInit {}
 
-// <T> allows us to say "This function returns a specific shape of data"
 export async function httpClient<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+    const session = await auth0.getSession();
+    const token = session?.accessToken;
+
+    // 2. Prepare headers
+    const headers = new Headers(options.headers);
+    headers.set("Content-Type", "application/json");
+    
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+    }
+
     const config = {
-        ...options
+        ...options,
+        headers
     };
 
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
         
         if (!response.ok) {
-            // throw new Error(`API Error: ${response.status} - ${errorBody}`);
+            console.error(`Fetch failed with status: ${response.status}`);
             throw new Error(response.statusText);
         }
 
-        // Handle empty responses (like 204 No Content) to prevent JSON crashes
         if (response.status === 204) {
-            return [] as T; // Return empty array/object based on context
+            return [] as T;
         }
 
         const data = await response.json();
-        
         return data as T;
     } 
-    
     catch (error) {
-        // In production, you would send this to Sentry/Datadog
         console.error(`Http Client Error [${endpoint}]:`, error);
-        
-        // Re-throw the error so 'error.tsx' can catch it (Recommended for Next.js)
         throw error;
     }
 }

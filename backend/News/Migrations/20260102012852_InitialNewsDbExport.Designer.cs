@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace News.Migrations
 {
     [DbContext(typeof(NewsDbContext))]
-    [Migration("20251222092105_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260102012852_InitialNewsDbExport")]
+    partial class InitialNewsDbExport
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace News.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("News")
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -85,43 +85,6 @@ namespace News.Migrations
 
                     b.HasIndex("ArticleID");
 
-                    b.ToTable("NewsArticleEntity", "News");
-                });
-
-            modelBuilder.Entity("News.Models.NewsArticleEntity", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ArticleID")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Industry")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NewsArticleUuid")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("NewsArticleUuid");
-
                     b.ToTable("NewsArticleEntities", "News");
                 });
 
@@ -130,17 +93,6 @@ namespace News.Migrations
                     b.HasOne("News.Models.NewsArticle", "NewsArticle")
                         .WithMany("NewsArticleEntities")
                         .HasForeignKey("ArticleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NewsArticle");
-                });
-
-            modelBuilder.Entity("News.Models.NewsArticleEntity", b =>
-                {
-                    b.HasOne("News.Models.NewsArticle", "NewsArticle")
-                        .WithMany()
-                        .HasForeignKey("NewsArticleUuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

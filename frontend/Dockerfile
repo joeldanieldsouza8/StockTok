@@ -6,8 +6,8 @@
 FROM base AS deps
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci
+COPY ./package.json ./package-lock.json* ./
+RUN npm ci --include=optional && npm rebuild lightningcss
 
 # -----------------------------------------
 # Stage 2: Build the application
@@ -16,7 +16,7 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY frontend/ .
+COPY . .
 
 # BACKEND_API_URL* vars must be set at build time
 ARG BACKEND_API_URL
