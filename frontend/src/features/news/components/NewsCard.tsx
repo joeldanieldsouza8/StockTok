@@ -1,6 +1,6 @@
 import React from "react";
 import { NewsArticle } from "../../../types/news";
-import { ContentCard } from "@/src/components/cards/ContentCard";
+import { ContentCard } from "@/components/cards/ContentCard";
 
 interface Props {
   article: NewsArticle;

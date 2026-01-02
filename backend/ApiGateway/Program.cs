@@ -1,25 +1,20 @@
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ApiGateway;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
         ConfigureServices(builder);
 
         var app = builder.Build();
+
         ConfigureMiddleware(app);
 
         app.Run();
@@ -30,19 +25,7 @@ public class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        // Configure CORS to allow the Frontend to communicate with the Gateway
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowNextJs", policy =>
-            {
-                policy.WithOrigins("http://localhost:3000") 
-                      .AllowAnyHeader()
-                      .AllowAnyMethod()
-                      .AllowCredentials();
-            });
-        });
-
-        // Configure JWT Bearer using Auth0 settings
+        // Configure JWT Bearer using Auth0 settings from configuration
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -81,12 +64,26 @@ public class Program
                 };
             });
 
-        // Add YARP reverse proxy
-        services.AddReverseProxy()
-                .LoadFromConfig(configuration.GetSection("ReverseProxy"));
+        // Add YARP reverse proxy and load routes/clusters from configuration
+        services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
+        // Authorization: we register it but do not enforce it globally. We enforce
+        // authentication selectively in middleware for specific path prefixes.
         services.AddAuthorization();
+
         services.AddControllers();
+
+        // Basic CORS config for local development. Tighten this in production.
+        services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            });
+        });
+
         services.AddHealthChecks();
     }
 
@@ -99,15 +96,14 @@ public class Program
 
         app.UseRouting();
 
-        // Use the specific Next.js CORS policy
-        app.UseCors("AllowNextJs");
+        app.UseCors("CorsPolicy");
 
         app.UseAuthentication();
         app.UseAuthorization();
 
         // List of path prefixes that require an authenticated user.
         // Modify this list to protect other routes as needed.
-        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy", "/api/news" /* add other prefixes here */ };
+        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy", "/api/posts", "/api/comments", "/api/news", "/api/feed", "/feed" };
 
         app.Use(async (context, next) =>
         {
@@ -126,8 +122,8 @@ public class Program
 
         app.MapHealthChecks("/health");
         app.MapControllers();
-        
+
         // Map YARP last
+        // take precedence over proxied routes.
         app.MapReverseProxy();
-    }
-}
+    }}

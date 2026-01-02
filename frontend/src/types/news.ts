@@ -1,5 +1,6 @@
 // News article
 export interface NewsArticle {
+    id: string;
     uuid: string;
     title: string;
     description: string;

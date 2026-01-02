@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { watchlistService } from "@/services/watchlist.service";
+import { watchlistService } from "@/services/WatchlistService";
 
 interface AddTickerDialogProps {
   open: boolean;
