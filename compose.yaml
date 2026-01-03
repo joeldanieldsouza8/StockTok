@@ -111,41 +111,6 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  news-service:
-    build:
-      context: .
-      dockerfile: backend/News/Dockerfile 
-    container_name: stocktok-news-service
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__NewsDatabase=${NEWS_DB_CONNECTION}
-      - NewsApiSettings__BaseUrl=https://api.marketaux.com/v1/
-      - NewsApiSettings__ApiToken=${MARKETAUX_API_TOKEN}
-      - Auth0__Domain=${AUTH0_DOMAIN}
-      - Auth0__Audience=${AUTH0_AUDIENCE}
-    depends_on:
-      news-db:
-        condition: service_healthy
-    restart: unless-stopped
-
-  social-service:
-    build:
-      context: .
-      dockerfile: backend/Social/Dockerfile
-    container_name: stocktok-social-service
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__SocialDB=${SOCIAL_DB_CONNECTION}
-      - Auth0__Domain=${AUTH0_DOMAIN}
-      - Auth0__Audience=${AUTH0_AUDIENCE}
-    ports:
-      - "5169:8080"
-    depends_on:
-      social-db:
-        condition: service_healthy
-    restart: unless-stopped
 
   market-service:
     build:

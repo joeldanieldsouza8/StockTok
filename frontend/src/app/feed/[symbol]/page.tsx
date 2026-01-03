@@ -24,10 +24,7 @@ export default function FeedPage({ params }: FeedPageProps) {
             <TabsContent value="posts">
                 <PostsTab symbol={upperSymbol} />
             </TabsContent>
-            
-            <TabsContent value="news">
-                <NewsTab symbol={upperSymbol} />
-            </TabsContent>
+        
         </Tabs>
     )
 }
