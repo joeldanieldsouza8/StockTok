@@ -1,7 +1,6 @@
-import { getPostsByTickers } from "lib/api/posts-service";
 import { getNewsArticlesByTickers } from "./NewsService";
 import { FeedItem } from "@/types/feed";
-import { TopTickersResponse } from "@/types";
+import { getPostsByTickers } from "lib/api/posts-service";
 
 /**
  * Fetches news articles (and eventually user posts), groups them by stock ticker,
