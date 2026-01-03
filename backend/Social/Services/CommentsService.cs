@@ -37,7 +37,7 @@ public class CommentsService
             Id = Guid.NewGuid().ToString(),
             PostId = createCommentDto.PostId,
             Body = createCommentDto.Content,
-            AuthorId = authorId,
+            AuthorId = createCommentDto.Username,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };

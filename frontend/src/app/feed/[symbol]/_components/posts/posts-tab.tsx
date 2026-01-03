@@ -14,7 +14,8 @@ export default async function PostsTab({ symbol }: PostsTabProps) {
     try {
         const { token } = await auth0.getAccessToken();
 
-        const response = await fetch(`${apiBaseUrl}/api/posts`, {
+        // Pass ticker as query parameter to use the service (which includes comments)
+        const response = await fetch(`${apiBaseUrl}/api/posts?ticker=${symbol}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
@@ -22,7 +23,22 @@ export default async function PostsTab({ symbol }: PostsTabProps) {
         });
 
         if (response.ok) {
-            allPosts = await response.json();
+            const data = await response.json();
+            // Map backend response to frontend format
+            allPosts = data.map((post: any) => ({
+                id: post.id,
+                username: post.username,
+                title: post.title,
+                description: post.body || post.description,
+                time_created: post.createdAt || post.time_created,
+                ticker: post.ticker,
+                comments: post.comments?.map((c: any) => ({
+                    id: c.id,
+                    username: c.authorId || 'Anonymous',
+                    content: c.content || c.body,
+                    time_created: c.createdAt,
+                })) || [],
+            }));
         } else {
             console.error("Failed to fetch posts:", response.status);
         }
@@ -30,9 +46,10 @@ export default async function PostsTab({ symbol }: PostsTabProps) {
         console.error("Error fetching posts:", error);
     }
 
-    const filteredPosts = allPosts
-        .filter(p => p.ticker === symbol)
-        .sort((a, b) => new Date(b.time_created).getTime() - new Date(a.time_created).getTime());
+    // No need to filter anymore - backend already filtered by ticker
+    const sortedPosts = allPosts.sort(
+        (a, b) => new Date(b.time_created).getTime() - new Date(a.time_created).getTime()
+    );
 
-    return <PostsFeed symbol={symbol} initialPosts={filteredPosts} />;
+    return <PostsFeed symbol={symbol} initialPosts={sortedPosts} />;
 }
