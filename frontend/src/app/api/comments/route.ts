@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-
+    const username = session.user.nickname || session.user.name || 'Anonymous';
     
 
     // forwarding to backend
@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         PostId: body.postId, 
-        Content: body.content,  
+        Content: body.content,
+        Username: username,  
       }),
     });
 

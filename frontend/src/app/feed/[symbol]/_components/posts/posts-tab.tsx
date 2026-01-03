@@ -34,7 +34,7 @@ export default async function PostsTab({ symbol }: PostsTabProps) {
                 ticker: post.ticker,
                 comments: post.comments?.map((c: any) => ({
                     id: c.id,
-                    username: c.authorId?.split('|')[1]?.slice(0, 8) || c.authorId || 'Anonymous',
+                    username: c.authorId || 'Anonymous',
                     content: c.content || c.body,
                     time_created: c.createdAt,
                 })) || [],
