@@ -1,6 +1,7 @@
 import {Post} from "@/lib/types/post";
 import {Card, CardTitle} from "@/components/ui/card";
 import {formatPostDate} from "@/lib/utils";
+import CommentSection from "@/src/app/feed/[symbol]/_components/comments/comment-section";
 
 interface PostCardProps {
     post: Post;
@@ -31,6 +32,8 @@ export default function PostCard({ post }: PostCardProps) {
                     {dateFormatted} <br />
                     {timeFormatted}
                 </div>
+
+                <CommentSection postId={post.id} ticker={post.ticker} />
             </div>
         </Card>
     );

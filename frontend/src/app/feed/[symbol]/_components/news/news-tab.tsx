@@ -13,15 +13,15 @@ export default async function NewsTab({ symbol }: NewsTabProps) {
   // const news = newsData;
   
   // [DEBUG]
-  console.log("Printing the data from the news API")
-  console.log(news);
+  // console.log("Printing the data from the news API")
+  // console.log(news);
   
-  console.log("Printing the news article entities")
-  news.map((item) => {
-    item.newsArticleEntities.map((entity) => {
-      console.log("entity", entity);
-    })
-  })
+  // console.log("Printing the news article entities")
+  // news.map((item) => {
+  //   item.newsArticleEntities.map((entity) => {
+  //     console.log("entity", entity);
+  //   })
+  // })
 
   return (
     <div className="flex flex-col">

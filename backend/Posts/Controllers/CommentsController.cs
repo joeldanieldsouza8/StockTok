@@ -19,7 +19,7 @@ public class CommentsController : ControllerBase
     }
     
     // GET: api/comments/post/{postId}
-    [HttpGet("post/{postId}")]
+    [HttpGet("post/{postId}", Name = "GetAllCommentsByPostIdAsync")]
     public async Task<IActionResult> GetAllCommentsByPostIdAsync(string postId)
     {
         var comments = await _commentsService.GetAllCommentsByPostIdAsync(postId);

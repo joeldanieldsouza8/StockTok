@@ -10,9 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"; // Import the Server Action
-
-import { createPostAction } from "../../actions";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {createPostAction} from "@/src/app/feed/[symbol]/_components/posts/actions"; // Import the Server Action
 
 // Zod Schema Definition
 const formSchema = z.object({

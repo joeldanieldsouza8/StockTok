@@ -10,8 +10,8 @@ interface PostsTabProps {
 export default async function PostTab({ symbol }: PostsTabProps) {
   const posts = await getAllPostsBySymbol(symbol);
   
-  console.log("All posts from the backend")
-  console.log(posts)
+  // console.log("All posts from the backend")
+  // console.log(posts)
 
   return <PostsFeed symbol={symbol} initialPosts={posts} />;
 }
