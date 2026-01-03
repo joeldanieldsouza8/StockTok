@@ -1,66 +1,72 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Posts.Data;
-using Posts.Hubs;
-using Posts.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using Social.Data;
+using Posts.Services;
+using Posts.Hubs;
+using System.Text.Json;   
 
-namespace Social;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
-{
-    public static void Main(string[] args)
+// --- DATABASE CONFIG ---
+builder.Services.AddDbContext<PostDBContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SocialDB")));
+
+builder.Services.AddSignalR(); 
+
+// --- AUTHENTICATION ---
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        ConfigureServices(builder);
-
-        var app = builder.Build();
-
-        ConfigureMiddleware(app);
-
-        app.Run();
-    }
-
-    private static void ConfigureServices(WebApplicationBuilder builder)
-    {
-        var services = builder.Services;
-        var configuration = builder.Configuration;
-
-        services.AddDbContext<PostDBContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("SocialDB")));
-
-        services.AddScoped<PostsService>();
-        services.AddScoped<CommentsService>();
-
-        services.AddSignalR();
-
-        services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                options.JsonSerializerOptions.WriteIndented = true;
-            });
-
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-    }
-
-    private static void ConfigureMiddleware(WebApplication app)
-    {
-        if (app.Environment.IsDevelopment())
+        var domain = builder.Configuration["Auth0:Domain"];
+        options.Authority = domain.StartsWith("https://") ? domain : $"https://{domain}/";
+        options.Audience = builder.Configuration["Auth0:Audience"];
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+            NameClaimType = ClaimTypes.NameIdentifier
+        };
+    });
 
-        // app.UseHttpsRedirection();
+// ---  SERVICES ---
+builder.Services.AddScoped<PostsService>();
+builder.Services.AddScoped<CommentsService>();
 
-        // The order of these is critical
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+builder.Services.AddEndpointsApiExplorer();
 
-        app.MapControllers();
+var app = builder.Build();
 
-        app.MapHub<CommentHub>("/hubs/comments");
+// --- MIDDLEWAREE ---
+app.UseRouting();
+
+app.UseCors("_myAllowSpecificOrigins"); 
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.MapHub<CommentHub>("/commentHub"); 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<PostDBContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred creating the DB.");
     }
 }
+
+app.Run();

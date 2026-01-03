@@ -34,10 +34,12 @@ public class CommentsService
         // Create the comment
         var newComment = new Comment
         {
-            Id = createCommentDto.id,
+            Id = Guid.NewGuid().ToString(),
             PostId = createCommentDto.PostId,
-            Body = createCommentDto.Body,
-            AuthorId = authorId, 
+            Body = createCommentDto.Content,
+            AuthorId = authorId,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         // Save the comment to the database
@@ -62,7 +64,7 @@ public class CommentsService
             .Select(c => new CommentResponseDto
             {
                 Id = c.Id,
-                Body = c.Body,
+                Content = c.Body,
                 AuthorId = c.AuthorId,
                 PostId = c.PostId,
                 CreatedAt = c.CreatedAt
@@ -116,7 +118,7 @@ public class CommentsService
             throw new UnauthorizedAccessException("You do not own this comment.");
         }
 
-        existingComment.Body = updateDto.Body;
+        existingComment.Body = updateDto.Content;
         existingComment.UpdatedAt = DateTime.UtcNow;
 
         // Save the updated record to the database
@@ -136,7 +138,7 @@ public class CommentsService
         return new CommentResponseDto
         {
             Id = comment.Id,
-            Body = comment.Body,
+            Content = comment.Body,
             AuthorId = comment.AuthorId,
             PostId = comment.PostId,
             CreatedAt = comment.CreatedAt

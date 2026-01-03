@@ -1,4 +1,10 @@
-import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_FORM_ACTIONS } from "react";
+export interface Comment {
+    id?: string;
+    username: string;
+    content: string;
+    time_created: string;
+}
+
 
 export interface PostItem {
     id?: string;
@@ -9,7 +15,7 @@ export interface PostItem {
     ticker: string;
     upvotes: number;
     downvotes: number;
-    comments: number;
+    comments: Comment[];
 }
 
 export interface PostItemObject {
@@ -19,4 +25,5 @@ export interface PostItemObject {
     description: string;
     time_created: string;
     ticker: string;
+    comments: Comment[];
 }

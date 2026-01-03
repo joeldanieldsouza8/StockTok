@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Posts.Services;
 using Social.Data;
@@ -11,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace Social.Controllers
 {
+    [ApiController]
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/posts")]
-    [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly PostDBContext _context;
@@ -23,6 +25,20 @@ namespace Social.Controllers
         {
             _context = context;
             _postsService = postsService;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Post>> createPost(Post post)
+        {
+            if (string.IsNullOrEmpty(post.id))
+            {
+                post.id = System.Guid.NewGuid().ToString();
+            }
+
+            _context.Posts.Add(post);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(getOnePost), new { id = post.id }, post);
         }
 
         [EnableCors("_myAllowSpecificOrigins")]
@@ -38,31 +54,21 @@ namespace Social.Controllers
             return post;
         }
 
-        [EnableCors("_myAllowSpecificOrigins")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> getPosts()
-        {
-            return await _context.Posts.ToListAsync();
-        }
 
         // GET: api/posts?ticker=TSLA
         [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] string ticker)
+        public async Task<IActionResult> GetAllPosts([FromQuery] string? ticker)
         {
-            var posts = await _postsService.GetPostsAsync(ticker);
+            // If a ticker is provided, use the service to filter
+            if (!string.IsNullOrEmpty(ticker))
+            {
+                var filteredPosts = await _postsService.GetPostsAsync(ticker);
+                return Ok(filteredPosts);
+            }
 
-            return Ok(posts);
-        }
-
-        [EnableCors("_myAllowSpecificOrigins")]
-        [HttpPost]
-        public async Task<ActionResult<Post>> sendPost(Post post)
-        {
-            post.id = Utility.generateSalt();
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(getOnePost), new { id = post.id }, post);
+            // Otherwise, return everything from the DB
+            var allPosts = await _context.Posts.ToListAsync();
+            return Ok(allPosts);
         }
 
 
