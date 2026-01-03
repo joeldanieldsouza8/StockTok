@@ -1,4 +1,4 @@
-namespace User.Controllers;
+namespace Users.Controllers;
 
 public class UserController
 {

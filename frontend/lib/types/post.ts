@@ -4,6 +4,9 @@ export interface Post {
     body: string;        
     ticker: string;
     createdAt: string;   
+    updatedAt: string;
+    
+    // Foreign Key
     authorId: string;
     // comments: Comment[]; 
 }

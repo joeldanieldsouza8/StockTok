@@ -1,21 +1,23 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using User.Data.Configurations;
+using Users.Models;
 
-namespace User.Data;
+namespace Users.Data;
 
 public class UserDbContext : DbContext
 {
-    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options) { }
-    
-    public DbSet<Models.User>  Users { get; set; }
+    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         // new UserEntityTypeConfiguration().Configure(modelBuilder.Entity<Models.User>());
-        
+
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

@@ -1,6 +1,6 @@
-using User.Data;
+using Users.Data;
 
-namespace User.Services;
+namespace Users.Services;
 
 public class UserService
 {

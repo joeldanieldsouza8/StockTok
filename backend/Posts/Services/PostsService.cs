@@ -27,9 +27,11 @@ public class PostsService
             Title = createPostDto.Title,
             Body = createPostDto.Body,
             Ticker = createPostDto.Ticker,
-            AuthorId = authorId,
             CreatedAt = DateTime.UtcNow.ToString(),
-            UpdatedAt = DateTime.UtcNow.ToString()
+            UpdatedAt = DateTime.UtcNow.ToString(),
+            
+            // Foreign Key
+            AuthorId = authorId,
         };
 
         // Save the post to the database
@@ -70,7 +72,7 @@ public class PostsService
         return post != null ? MapToDto(post) : new PostResponseDto();
     }
 
-    public async Task<PostResponseDto> UpdatePostByIdAsync(Guid id, UpdatePostDto updateDto, string authorId)
+    public async Task<PostResponseDto> UpdatePostByIdAsync(string id, UpdatePostDto updateDto, string authorId)
     {
         // Query the database for the post
         var post = await _context.Posts
@@ -100,7 +102,7 @@ public class PostsService
         return updatePostDto;
     }
 
-    public async Task<bool> DeletePostByIdAsync(Guid id, string authorId)
+    public async Task<bool> DeletePostByIdAsync(string id, string authorId)
     {
         // Query the database for the post
         var post = await _context.Posts

@@ -41,7 +41,7 @@ public class CommentsController : ControllerBase
         
         var newComment = await _commentsService.CreateCommentAsync(createCommentDto, userId);
         
-        return CreatedAtAction(nameof(GetAllCommentsByPostIdAsync), new { id = newComment.Id }, newComment);
+        return CreatedAtRoute(nameof(GetAllCommentsByPostIdAsync), new { id = newComment.Id }, newComment);
     }
 
     // PUT: api/comments/{id}

@@ -1,4 +1,4 @@
-namespace User.Models;
+namespace Users.Models;
 
 public class User
 {

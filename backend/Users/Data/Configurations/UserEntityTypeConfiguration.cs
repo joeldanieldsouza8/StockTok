@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Users.Models;
 
-namespace User.Data.Configurations;
+namespace Users.Data.Configurations;
 
-public class UserEntityTypeConfiguration : IEntityTypeConfiguration<Models.User>
+public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<Models.User> builder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("Users");
         

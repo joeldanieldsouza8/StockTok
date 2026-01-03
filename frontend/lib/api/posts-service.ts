@@ -1,7 +1,7 @@
 'use server'
 
 import { auth0 } from "@/src/lib/auth0";
-import { Post, CreatePostDto} from "@/lib/types/post-item";
+import { Post, CreatePostDto} from "@/lib/types/post";
 import {httpClient} from "@/lib/api/fetch-client";
 
 // export async function createPost(post: PostItemObject): Promise<PostItem> {

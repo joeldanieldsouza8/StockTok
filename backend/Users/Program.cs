@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using User.Data;
+using Users.Data;
 
-namespace User;
+namespace Users;
 
 public class Program
 {
