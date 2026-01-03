@@ -1,4 +1,6 @@
-import { getAllPosts } from '@/lib/api/posts-service';
+'use server'
+
+import {getAllPosts, getAllPostsBySymbol} from '@/lib/api/posts-service';
 import PostsFeed from './posts-feed';
 
 interface PostsTabProps {
@@ -6,14 +8,10 @@ interface PostsTabProps {
 }
 
 export default async function PostTab({ symbol }: PostsTabProps) {
-  const allPosts = await getAllPosts();
+  const posts = await getAllPostsBySymbol(symbol);
   
   console.log("All posts from the backend")
-  console.log(allPosts)
+  console.log(posts)
 
-  const filteredPosts = allPosts
-      .filter(p => p.ticker === symbol)
-      .sort((a, b) => new Date(b.time_created).getTime() - new Date(a.time_created).getTime());
-
-  return <PostsFeed symbol={symbol} initialPosts={filteredPosts} />;
+  return <PostsFeed symbol={symbol} initialPosts={posts} />;
 }

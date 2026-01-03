@@ -1,5 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using News.Clients;
 using News.Data;
 using News.Services;
@@ -51,6 +54,18 @@ public class Program
         
         services.AddScoped<NewsService>();
         
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = configuration["Auth0:Domain"];
+                options.Audience = configuration["Auth0:Audience"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            });
+        
         // Prevent circular referencing
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -74,8 +89,8 @@ public class Program
         // app.UseHttpsRedirection();
 
         // The order of these is critical
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
     }

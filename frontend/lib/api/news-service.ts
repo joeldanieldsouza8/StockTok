@@ -8,7 +8,7 @@ export async function getNewsBySymbol(symbol: string): Promise<NewsItem[]> {
     
     const { token } = await auth0.getAccessToken();
     
-    const options = {
+    const options: RequestInit = {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

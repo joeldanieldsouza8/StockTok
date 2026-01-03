@@ -19,10 +19,10 @@ public class CommentsController : ControllerBase
     }
     
     // GET: api/comments/post/{postId}
-    [HttpGet("post/{postId:guid}")]
-    public async Task<IActionResult> GetCommentsByPost(Guid postId)
+    [HttpGet("post/{postId}")]
+    public async Task<IActionResult> GetAllCommentsByPostIdAsync(string postId)
     {
-        var comments = await _commentsService.GetCommentsByPostIdAsync(postId);
+        var comments = await _commentsService.GetAllCommentsByPostIdAsync(postId);
         
         return Ok(comments);
     }
@@ -41,12 +41,12 @@ public class CommentsController : ControllerBase
         
         var newComment = await _commentsService.CreateCommentAsync(createCommentDto, userId);
         
-        return CreatedAtAction(nameof(GetCommentsByPost), new { id = newComment.Id }, newComment);
+        return CreatedAtAction(nameof(GetAllCommentsByPostIdAsync), new { id = newComment.Id }, newComment);
     }
 
     // PUT: api/comments/{id}
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateComment(Guid id, [FromBody] UpdateCommentDto updateDto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateCommentByIdAsync(string id, [FromBody] UpdateCommentDto updateDto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
@@ -55,7 +55,7 @@ public class CommentsController : ControllerBase
             return Unauthorized();
         }
         
-        var updatedComment = await _commentsService.UpdateCommentAsync(id, updateDto, userId);
+        var updatedComment = await _commentsService.UpdateCommentByIdAsync(id, updateDto, userId);
         
         if (string.IsNullOrEmpty(updatedComment.Id.ToString()))
         {
@@ -66,8 +66,8 @@ public class CommentsController : ControllerBase
     }
 
     // DELETE: api/comments/{id}
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteComment(Guid id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCommentByIdAsync(string id)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
@@ -76,7 +76,7 @@ public class CommentsController : ControllerBase
             return Unauthorized();
         }
         
-        var success = await _commentsService.DeleteCommentAsync(id, userId);
+        var success = await _commentsService.DeleteCommentByIdAsync(id, userId);
         
         if (!success)
         {

@@ -2,7 +2,7 @@ namespace Posts.Models;
 
 public class Post
 {
-    public Guid Id { get; set; } =  Guid.NewGuid();
+    public string Id { get; set; } =  Guid.NewGuid().ToString();
     
     public string Title { get; set; } = string.Empty;
 
@@ -14,9 +14,9 @@ public class Post
     
     // public int Downvotes { get; set; } 
     
-    public DateTime CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = DateTime.UtcNow.ToString();
     
-    public DateTime UpdatedAt { get; set; }
+    public string UpdatedAt { get; set; }
     
     // Foreign Keys
     public string AuthorId { get; set; } = null!;

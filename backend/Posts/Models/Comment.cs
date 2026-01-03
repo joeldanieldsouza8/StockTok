@@ -2,7 +2,7 @@ namespace Posts.Models;
 
 public class Comment
 {
-    public Guid Id { get; set; } 
+    public string Id { get; set; } 
 
     public string Body { get; set; } = string.Empty;
     
@@ -11,7 +11,7 @@ public class Comment
     public DateTime UpdatedAt { get; set; }
 
     // Foreign Keys
-    public Guid PostId { get; set; }
+    public string PostId { get; set; }
     public string AuthorId { get; set; } = null!;
 
     // Navigation Property: A Comment belongs to One Post

@@ -20,16 +20,16 @@ public class PostsController : ControllerBase
 
     // GET: api/posts?ticker=TSLA
     [HttpGet]
-    public async Task<IActionResult> GetPosts([FromQuery] string ticker)
+    public async Task<IActionResult> GetAllPostsBySymbolAsync([FromQuery] string ticker)
     {
-        var posts = await _postsService.GetPostsAsync(ticker);
+        var posts = await _postsService.GetAllPostsBySymbolAsync(ticker);
         
         return Ok(posts);
     }
 
     // GET: api/posts/{id}
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetPost(Guid id)
+    public async Task<IActionResult> GetPostByIdAsync(string id)
     {
         var post = await _postsService.GetPostByIdAsync(id);
         
@@ -53,12 +53,12 @@ public class PostsController : ControllerBase
         
         var newPost = await _postsService.CreatePostAsync(createPostDto, userId);
         
-        return CreatedAtAction(nameof(GetPost), new { id = newPost.Id }, newPost);
+        return CreatedAtAction(nameof(GetPostByIdAsync), new { id = newPost.Id }, newPost);
     }
 
     // PUT: api/posts/{id}
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostDto updateDto)
+    public async Task<IActionResult> UpdatePostByIdAsync(Guid id, [FromBody] UpdatePostDto updateDto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
@@ -67,7 +67,7 @@ public class PostsController : ControllerBase
             return Unauthorized();
         }
         
-        var updatedPost = await _postsService.UpdatePostAsync(id, updateDto, userId);
+        var updatedPost = await _postsService.UpdatePostByIdAsync(id, updateDto, userId);
         
         if (string.IsNullOrEmpty(updatedPost.Id.ToString()))
         {
@@ -79,7 +79,7 @@ public class PostsController : ControllerBase
 
     // DELETE: api/posts/{id}
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeletePost(Guid id)
+    public async Task<IActionResult> DeletePostByIdAsync(Guid id)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
@@ -88,7 +88,7 @@ public class PostsController : ControllerBase
             return Unauthorized();
         }
         
-        var success = await _postsService.DeletePostAsync(id, userId);
+        var success = await _postsService.DeletePostByIdAsync(id, userId);
         
         if (!success)
         {

@@ -10,6 +10,7 @@ interface FeedPageProps {
 
 export default async function FeedPage({ params }: FeedPageProps) {
     const { symbol } = await params;
+    console.log(`Symbol ${symbol}`);
 
     const upperSymbol = symbol.toUpperCase();
     

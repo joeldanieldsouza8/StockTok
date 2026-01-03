@@ -1,4 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Posts.Data;
 using Posts.Hubs;
 using Posts.Services;
@@ -32,6 +35,18 @@ public class Program
         services.AddScoped<CommentsService>();
         
         services.AddSignalR();
+        
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = configuration["Auth0:Domain"];
+                options.Audience = configuration["Auth0:Audience"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            });
         
         services.AddControllers()
             .AddJsonOptions(options =>

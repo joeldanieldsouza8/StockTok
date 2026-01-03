@@ -33,7 +33,7 @@ public class CommentsService
         // Create the comment
         var newComment = new Comment
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             PostId = createCommentDto.PostId,
             Body = createCommentDto.Body,
             AuthorId = authorId, 
@@ -52,7 +52,7 @@ public class CommentsService
         return newCommentResponseDto;
     }
     
-    public async Task<List<CommentResponseDto>> GetCommentsByPostIdAsync(Guid postId)
+    public async Task<List<CommentResponseDto>> GetAllCommentsByPostIdAsync(string postId)
     {
         return await _context.Comments
             .AsNoTracking() 
@@ -69,7 +69,7 @@ public class CommentsService
             .ToListAsync();
     }
 
-    public async Task<bool> DeleteCommentAsync(Guid commentId, string authorId)
+    public async Task<bool> DeleteCommentByIdAsync(string commentId, string authorId)
     {
         // Find the comment in the database
         var comment = await _context.Comments
@@ -98,7 +98,7 @@ public class CommentsService
         return true;
     }
     
-    public async Task<CommentResponseDto> UpdateCommentAsync(Guid commentId, UpdateCommentDto updateDto, string userId)
+    public async Task<CommentResponseDto> UpdateCommentByIdAsync(string commentId, UpdateCommentDto updateDto, string userId)
     {
         // Query the database for the comment
         var existingComment = await _context.Comments.FindAsync(commentId);

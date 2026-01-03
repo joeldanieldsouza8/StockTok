@@ -1,22 +1,20 @@
-import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_FORM_ACTIONS } from "react";
-
-export interface PostItem {
-    id?: string;
-    username: string;
+export interface Post {
+    id: string;          
     title: string;
-    description: string;
-    time_created: Date;
+    body: string;        
     ticker: string;
-    upvotes: number;
-    downvotes: number;
-    comments: number;
+    createdAt: string;   
+    authorId: string;
+    // comments: Comment[]; 
 }
 
-export interface PostItemObject {
-    id?: string;
-    username: string;
+export interface CreatePostDto {
     title: string;
-    description: string;
-    time_created: string;
+    body: string;
     ticker: string;
+}
+
+export interface UpdatePostDto {
+    title: string;
+    body: string;
 }

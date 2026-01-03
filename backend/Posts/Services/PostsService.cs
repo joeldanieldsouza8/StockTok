@@ -23,13 +23,13 @@ public class PostsService
         // Create the record for the new post
         var newPost = new Post
         {
-            Id = Guid.NewGuid(), 
+            Id = Guid.NewGuid().ToString(), 
             Title = createPostDto.Title,
             Body = createPostDto.Body,
             Ticker = createPostDto.Ticker,
             AuthorId = authorId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow.ToString(),
+            UpdatedAt = DateTime.UtcNow.ToString()
         };
 
         // Save the post to the database
@@ -46,7 +46,7 @@ public class PostsService
         return newPostDto;
     }
 
-    public async Task<List<PostResponseDto>> GetPostsAsync(string ticker)
+    public async Task<List<PostResponseDto>> GetAllPostsBySymbolAsync(string ticker)
     {
         // Query the database for all the posts by the ticker
         var posts = await _context.Posts
@@ -60,7 +60,7 @@ public class PostsService
             .ToList();
     }
 
-    public async Task<PostResponseDto> GetPostByIdAsync(Guid id)
+    public async Task<PostResponseDto> GetPostByIdAsync(string id)
     {
         // Query the database for the post
         var post = await _context.Posts
@@ -70,7 +70,7 @@ public class PostsService
         return post != null ? MapToDto(post) : new PostResponseDto();
     }
 
-    public async Task<PostResponseDto> UpdatePostAsync(Guid id, UpdatePostDto updateDto, string authorId)
+    public async Task<PostResponseDto> UpdatePostByIdAsync(Guid id, UpdatePostDto updateDto, string authorId)
     {
         // Query the database for the post
         var post = await _context.Posts
@@ -88,7 +88,7 @@ public class PostsService
 
         post.Title = updateDto.Title;
         post.Body = updateDto.Body;
-        post.UpdatedAt = DateTime.UtcNow;
+        post.UpdatedAt = DateTime.UtcNow.ToString();
 
         await _context.SaveChangesAsync();
         
@@ -100,7 +100,7 @@ public class PostsService
         return updatePostDto;
     }
 
-    public async Task<bool> DeletePostAsync(Guid id, string authorId)
+    public async Task<bool> DeletePostByIdAsync(Guid id, string authorId)
     {
         // Query the database for the post
         var post = await _context.Posts
