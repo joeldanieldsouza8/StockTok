@@ -16,7 +16,7 @@ public class NewsService
         _context = context;
         _newsApiClient = newsApiClient;
     }
-    
+
     /// <summary>
     /// Retrieves news articles for provided ticker symbols.
     /// </summary>
@@ -24,69 +24,69 @@ public class NewsService
     /// <returns>A list of <see cref="NewsArticle"/> objects sorted by latest articles.</returns>
     public async Task<List<NewsArticle>> GetAllNewsBySymbolsAsync(List<string> symbols)
     {
-        // Calculate the cutoff time to determine if stored news is still considered "fresh" (6-hour cache)
         var fromSixHoursAgo = DateTime.UtcNow.AddHours(-6);
 
-        // Check if there are any news articles by symbol in the database, which are more than 6 hours old (cache time period)
+        // Get ALL existing articles for these symbols (fresh AND stale)
         var existingDbArticles = await _context.NewsArticles
             .Include(a => a.NewsArticleEntities)
             .Where(a => a.NewsArticleEntities.Any(e => symbols.Contains(e.Symbol)))
             .OrderByDescending(a => a.PublishedAt)
             .ToListAsync();
 
-        // If there are no news articles in the database that are more than 6 hours old (cache time period), then simply return the existing news articles in the database
-        bool hasRecentNews = existingDbArticles.Any(a => a.PublishedAt > fromSixHoursAgo);
+        // Identify which symbols from your request actually have "Fresh" news
+        var symbolsWithFreshNews = existingDbArticles
+            .Where(a => a.PublishedAt > fromSixHoursAgo)
+            .SelectMany(a => a.NewsArticleEntities)
+            .Where(e => symbols.Contains(e.Symbol)) // Filter to only the requested ones
+            .Select(e => e.Symbol)
+            .Distinct()
+            .ToHashSet();
 
-        if (hasRecentNews)
+        // Determine which symbols are MISSING fresh coverage
+        var symbolsToFetch = symbols
+            .Where(s => !symbolsWithFreshNews.Contains(s))
+            .ToList();
+
+        // If all symbols have fresh news, return early
+        if (symbolsToFetch.Count == 0)
         {
             return existingDbArticles;
         }
-        
-        // [TODO]: Remove this if we decide not to use the `NewsFilterParams` class
-        // var queryParams = new NewsFilterParams
-        // {
-        //     Symbols = [symbol],
-        //     // PublishedAfter = 
-        // };
 
-        // Query the Marketaux API
-        var apiNewsArticlesDtos = await _newsApiClient.GetAllNewsBySymbolsAsync(symbols);
+        // Call the API only for the missing symbols 
+        var apiNewsArticlesDtos = await _newsApiClient.GetAllNewsBySymbolsAsync(symbolsToFetch);
 
-        // Collect the new news articles by UUID that don't yet exist in the database
+        // Get UUIDs of the NEWLY fetched items
         var apiUuids = apiNewsArticlesDtos.Select(d => d.Uuid).ToList();
 
-        var currentUuids = await _context.NewsArticles
+        // Check which of these specific new UUIDs already exist in DB
+        // (We only need to check against the new batch, not the whole DB)
+        var existingUuidsInDb = await _context.NewsArticles
             .Where(a => apiUuids.Contains(a.Uuid))
             .Select(a => a.Uuid)
             .ToListAsync();
 
-        var currentUuidSet = currentUuids.ToHashSet();
+        var existingUuidSet = existingUuidsInDb.ToHashSet();
 
-        // Collect all DTOs that do not currently exist in the DB
-        var filteredNewsArticlesDtos = apiNewsArticlesDtos
-            .Where(dto => !currentUuidSet.Contains(dto.Uuid))
+        // Filter out duplicates
+        var newEntities = apiNewsArticlesDtos
+            .Where(dto => !existingUuidSet.Contains(dto.Uuid))
+            .Select(dto => NewsArticleDtoToEntity(dto))
             .ToList();
 
-        // Save only the new articles
-        if (filteredNewsArticlesDtos.Count > 0)
+        if (newEntities.Count > 0)
         {
-            var newEntities = filteredNewsArticlesDtos
-                .Select(dto => NewsArticleDtoToEntity(dto))
-                .ToList();
-
             await _context.NewsArticles.AddRangeAsync(newEntities);
             await _context.SaveChangesAsync();
 
-            // Add to the list to be returned
             existingDbArticles.AddRange(newEntities);
         }
-        
-        // Re-sort the combined list so the newest API items appear at the top
+
+        // Return combined list (DB Cache + New API items)
         return existingDbArticles
             .OrderByDescending(a => a.PublishedAt)
             .ToList();
     }
-
     /// <summary>
     /// Maps a raw API response DTO to a database Entity.
     /// </summary>

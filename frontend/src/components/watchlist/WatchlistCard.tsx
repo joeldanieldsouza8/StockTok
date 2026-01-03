@@ -29,7 +29,7 @@ import { WatchlistResponse } from "@/types";
 import { EditWatchlistDialog } from "./EditWatchlistDialog";
 import { DeleteWatchlistDialog } from "./DeleteWatchlistDialog";
 import { AddTickerDialog } from "./AddTickerDialog";
-import { watchlistService } from "@/services/watchlist.service";
+import { watchlistService } from "@/services/WatchlistService";
 
 interface WatchlistCardProps {
   watchlist: WatchlistResponse;

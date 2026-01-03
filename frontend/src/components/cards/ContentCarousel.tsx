@@ -54,7 +54,8 @@ export function ContentCarousel<T>({
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-5xl mx-auto pb-12">
+      {" "}
       <Carousel
         setApi={setApi}
         opts={{
@@ -65,9 +66,7 @@ export function ContentCarousel<T>({
       >
         <CarouselContent>
           {items.map((item, index) => (
-            // 2. Use a real ID, fall back to index only if absolutely necessary
             <CarouselItem key={keyExtractor ? keyExtractor(item) : index}>
-              {/* 3. Removed the restricting <div> wrapper */}
               {renderItem(item, index)}
             </CarouselItem>
           ))}
@@ -79,20 +78,6 @@ export function ContentCarousel<T>({
           </>
         )}
       </Carousel>
-
-      {/* Optional: Dots indicator */}
-      {items.length > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
-          {items.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className="w-2 h-2 rounded-full bg-slate-600 hover:bg-slate-400 transition-colors"
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

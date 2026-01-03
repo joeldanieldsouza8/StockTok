@@ -1,36 +1,46 @@
-import { getNewsArticles } from "./NewsService";
-import { FeedItem } from "../types/feed";
+import { getNewsArticlesByTickers } from "./NewsService";
+import { FeedItem } from "@/types/feed";
+import { getPostsByTickers } from "lib/api/posts-service";
 
 /**
- * Fetches news articles (and eventually user posts), groups them by stock ticker, 
+ * Fetches news articles (and eventually user posts), groups them by stock ticker,
  * and returns a list containing the latest item for each unique stock.
  * @returns A promise that resolves to an array of FeedItems, with one item per ticker.
  */
-export async function getFeedByTicker(): Promise<FeedItem[]> {
+export async function getFeedByTickers<T>(
+  tickers: T[],
+  getSymbol: (item: T) => string = (item: any) => item.id,
+  accessToken?: string
+): Promise<FeedItem[]> {
   try {
     // Fetch Data for feed
-    const [newsArticles] = await Promise.all([ // Promise.all fetches multiple data sources in parallel
-      getNewsArticles().catch((err) => {
-        console.error("DEBUG: Fetch failed details:", err); 
+    const symbols = tickers.map(getSymbol);
+
+    const [newsArticles, userPosts] = await Promise.all([
+      // Promise.all fetches multiple data sources in parallel
+      getNewsArticlesByTickers(symbols, accessToken).catch((err) => {
+        console.error("DEBUG: Fetch failed details:", err);
+        return [];
+      }),
+      getPostsByTickers(symbols).catch((err) => {
+        console.error("DEBUG: Fetch failed details:", err);
         return [];
       }),
     ]);
-    
+
     // Normalise the raw API response into a unified FeedItem structure
     const newsItems: FeedItem[] = newsArticles.map((article) => ({
       type: "news" as const,
       data: article,
     }));
 
-    // (For later)
-    //
-    // const postItems: FeedItem[] = userPosts.map(post => ({
-    // type: 'post' as const,
-    // data: post
-    // }));
+    const postItems: FeedItem[] = userPosts.map((post) => ({
+      type: "post" as const,
+      data: post,
+    }));
 
     // Structure the items such that keys are tickers containing news and post items about associated tickers
-    const groupedByTicker = groupItemsByTicker(newsItems);
+    const groupedByTicker = groupItemsByTicker(newsItems, postItems);
 
     // Convert the Dictionary into a single list of FeedItems, sorted then having the top item selected per ticker per news and user post
     return alternateByTicker(groupedByTicker);
@@ -41,22 +51,27 @@ export async function getFeedByTicker(): Promise<FeedItem[]> {
 
   /**
    * Groups a list of FeedItems into a Dictionary keyed by the ticker.
-   * @param newsItems 
+   * @param newsItems
    * @returns a grouped list of News and Social Posts by ticker.
    */
   function groupItemsByTicker(
-    newsItems: FeedItem[]
-    //      ,postItems: FeedItem[]
+    newsItems: FeedItem[],
+    postItems: FeedItem[]
   ): Map<
     string,
     {
       news: FeedItem[];
-      //posts: FeedItem[]
+      posts: FeedItem[];
     }
   > {
-    const tickerMap = new Map<string, { news: FeedItem[] }>(); //posts: FeedItem[]
+    const tickerMap = new Map<
+      string,
+      { news: FeedItem[]; posts: FeedItem[] }
+    >();
 
     newsItems.forEach((item) => {
+      console.log("Raw Article Data:", JSON.stringify(item.data, null, 2));
+      
       if (
         item.type === "news" &&
         item.data.newsArticleEntities &&
@@ -66,30 +81,33 @@ export async function getFeedByTicker(): Promise<FeedItem[]> {
 
         if (!tickerMap.has(ticker)) {
           tickerMap.set(ticker, {
-            news: [], //, posts: []
+            news: [],
+            posts: [],
           });
         }
 
         tickerMap.get(ticker)!.news.push(item);
       }
     });
-    // postItems.forEach((item) => {
-    //     if (item.type === "post" && item.data.ticker) {
-    //     const ticker = item.data.ticker;
 
-    //     if (!tickerMap.has(ticker)) {
-    //         tickerMap.set(ticker, { news: [], posts: [] });
-    //     }
+    postItems.forEach((item) => {
+      if (item.type === "post" && item.data.ticker) {
+        const ticker = item.data.ticker;
 
-    //     tickerMap.get(ticker)!.posts.push(item);
-    //     }
-    // });
+        if (!tickerMap.has(ticker)) {
+          tickerMap.set(ticker, { news: [], posts: [] });
+        }
+
+        tickerMap.get(ticker)!.posts.push(item);
+      }
+    });
+
     return tickerMap;
   }
 
   /**
    * Converts the grouped dictionary into a list.
-   * @param tickerMap 
+   * @param tickerMap
    * @returns An alternating list of the first News and Social Post of each ticker found in tickerMap.
    */
   function alternateByTicker(

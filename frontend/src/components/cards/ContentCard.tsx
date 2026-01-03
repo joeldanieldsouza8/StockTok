@@ -1,6 +1,7 @@
 import React from "react";
-import { Card, CardHeader, CardContent } from "components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 interface ContentCardProps {
   avatarSrc?: string;
@@ -36,110 +37,65 @@ export function ContentCard({
   interactions,
 }: ContentCardProps) {
   return (
-    <Card className="max-w-[900px] min-w-[700px] bg-slate-800 text-white border-slate-700">
+    <Card className="content-card-root">
       <CardHeader className="flex flex-row gap-3 items-center justify-between">
         <div className="flex gap-2 items-center">
-          <Avatar className="h-10 w-10 border-2 border-slate-600">
-            <AvatarImage src={avatarSrc} alt="icon" />
+          <Avatar className="h-10 w-10 border border-border">
+            <AvatarImage src={avatarSrc} />
             <AvatarFallback>{avatarFallback}</AvatarFallback>
           </Avatar>
-          <div className="flex bg-slate-700 px-3 py-2 rounded">
-            <h4 className="text-2xl font-semibold leading-none">
-              {name}{" "}
-              <span className="text-sm text-slate-400"> {publishedAt}</span>
+
+          <div className="content-card-user-badge">
+            <h4 className="text-xl font-semibold leading-none">
+              {name}
+              <span className="ml-2 text-xs text-muted-foreground font-normal">
+                {publishedAt}
+              </span>
             </h4>
           </div>
         </div>
+
         {metadata && (
-          <div className="text-sm text-slate-300 whitespace-nowrap">
+          <div className="text-xs font-mono text-muted-foreground bg-muted px-2 py-1 rounded">
             {metadata}
           </div>
         )}
       </CardHeader>
-      <CardContent className="px-6 space-y-3">
-        <div className="bg-slate-700 p-4 rounded space-y-3">
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-slate-300 text-base leading-relaxed">
+
+      <CardContent className="px-6 pb-6">
+        <div className="content-card-inner-body">
+          <h3 className="text-lg font-bold tracking-tight">{title}</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">
             {description}
           </p>
-          {link && !interactions && (
-            <div className="flex justify-end pt2">
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm"
-              >
-                {link.text || "See more..."}
-              </a>
-            </div>
-          )}
 
-          {interactions && (
-            <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-2">
+            {interactions && (
               <div className="flex items-center gap-4">
-                <button className="flex items-center gap-1 text-slate-300 hover:text-green-400 transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 15l7-7 7 7"
-                    />
-                  </svg>
-                  <span className="text-sm">{interactions.upvotes}</span>
+                <button className="content-card-interaction-btn hover:text-success">
+                  <ArrowUpIcon className="w-4 h-4" />
+                  <span className="text-xs font-medium">
+                    {interactions.upvotes}
+                  </span>
                 </button>
-
-                <button className="flex items-center gap-1 text-slate-300 hover:text-red-400 transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                  <span className="text-sm">{interactions.downvotes}</span>
+                <button className="content-card-interaction-btn hover:text-destructive">
+                  <ArrowDownIcon className="w-4 h-4" />
                 </button>
-
-                <button className="flex items-center gap-1 text-slate-300 hover:text-blue-400 transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                  <span className="text-sm">{interactions.comments}</span>
+                <button className="content-card-interaction-btn hover:text-primary">
+                  {/* <CommentIcon className="w-4 h-4" /> */}
+                  <span className="text-xs font-medium">
+                    {interactions.comments}
+                  </span>
                 </button>
               </div>
+            )}
 
-              {link && (
-                <a
-                  href={link.url}
-                  className="text-blue-400 hover:text-blue-300 text-sm"
-                >
-                  {link.text || "View full post →"}
-                </a>
-              )}
-            </div>
-          )}
+            {link && (
+              <a href={link.url} className="content-card-link">
+                {link.text || "Read more"}
+              </a>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

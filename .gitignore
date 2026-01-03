@@ -12,6 +12,7 @@ riderModule.iml
 **/.idea/
 .vs/
 *.user
+backend/.vs
 
 out/
 publish/
@@ -37,6 +38,14 @@ compose.override.yaml
 *.db
 *.sqlite
 
+# DOCKER
+docker-compose.override.yml
+compose.override.yaml
+
+#DB
+*.db
+*.sqlite
+
 # Backend
 backend/User/appsettings.json
 backend\User\appsettings.json
@@ -49,8 +58,6 @@ backend/Social/appsettings.json
 
 .vs
 .env
-# Ignore environment files for services (local secrets)
-backend/User/.env
 
 .DS_Store
 backend/.DS_Store
@@ -60,6 +67,8 @@ appsettings.json
 appsettings.Development.json
 .env
 .env.local
+# Ignore environment files for services (local secrets)
+backend/User/.env
 
 # Backend (For Mac)
 .DS_Store

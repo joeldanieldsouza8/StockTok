@@ -109,7 +109,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> HandleLogin()
     {
-        _logger.LogInformation("=== HandleLogin endpoint HIT ===");  
+        _logger.LogInformation("=== HandleLogin endpoint HIT ===");  // Add this first
     
         // Log all claims to debug
         foreach (var claim in User.Claims)

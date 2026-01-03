@@ -2,13 +2,8 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 // -----------------------------------------------------------------------------
@@ -180,7 +175,7 @@ public class Program
         app.MapControllers();
 
         // Map the reverse proxy last so controller routes (health, gateway endpoints)
+        // Map YARP last
         // take precedence over proxied routes.
         app.MapReverseProxy();
-    }
-}
+    }}

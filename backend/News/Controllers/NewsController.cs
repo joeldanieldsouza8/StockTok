@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace News.Controllers;
 
 [ApiController] 
-[Route("api/news")] // Removed "api/" because YARP handles the prefixing
-[Authorize]
+[Route("api/[controller]")] 
 public class NewsController : ControllerBase
 {
     private readonly NewsService _newsService;
@@ -16,14 +15,16 @@ public class NewsController : ControllerBase
         _newsService = newsService;
     }
 
-    // Changed to accept symbol from the path to match /news/NVDA
-    [HttpGet("{symbol}")] 
-    public async Task<IActionResult> GetNewsBySymbolAsync(string symbol)
+    [HttpGet]
+    public async Task<IActionResult> GetAllNewsBySymbolsAsync([FromQuery] string symbols)
     {
-        if (string.IsNullOrEmpty(symbol))
-            return BadRequest("No symbol provided");
+        if (string.IsNullOrEmpty(symbols))
+            return BadRequest("No symbols provided");
 
-        var symbolList = new List<string> { symbol.Trim().ToUpper() };
+        // Split the string by comma and remove whitespace
+        var symbolList = symbols.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                .Select(s => s.Trim().ToUpper())
+                                .ToList();
 
         var articles = await _newsService.GetAllNewsBySymbolsAsync(symbolList);
         return Ok(articles);

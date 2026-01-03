@@ -1,23 +1,33 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Bell, Menu, Search, X } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Bell, Menu, Search, X, User, LogOut } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
-export function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+interface NavbarProps {
+  user: {
+    name?: string;
+    email?: string;
+    picture?: string;
+    nickname?: string;
+  } | null;
+}
+
+export function Navbar({ user }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
@@ -25,7 +35,9 @@ export function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-background/95 backdrop-blur-md border-b border-border" : "bg-transparent"
+          scrolled
+            ? "bg-background/95 backdrop-blur-md border-b border-border"
+            : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4">
@@ -51,16 +63,28 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#markets" className="text-sm font-medium hover:text-primary transition-colors">
+              <a
+                href="#markets"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
                 Markets
               </a>
-              <a href="#community" className="text-sm font-medium hover:text-primary transition-colors">
+              <a
+                href="#community"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
                 Community
               </a>
-              <a href="#watchlist" className="text-sm font-medium hover:text-primary transition-colors">
+              <a
+                href="#watchlist"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
                 Watchlist
               </a>
-              <a href="#docs" className="text-sm font-medium hover:text-primary transition-colors">
+              <a
+                href="#docs"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
                 Docs
               </a>
             </nav>
@@ -70,7 +94,10 @@ export function Navbar() {
               {/* Desktop Search */}
               <div className="hidden lg:flex items-center relative">
                 <Search className="absolute left-3 size-4 text-muted-foreground" />
-                <Input placeholder="Search ticker or company..." className="pl-9 w-64" />
+                <Input
+                  placeholder="Search ticker or company..."
+                  className="pl-9 w-64"
+                />
               </div>
 
               {/* Search Icon (Mobile/Tablet) */}
@@ -86,10 +113,42 @@ export function Navbar() {
 
               {/* Auth Buttons */}
               <div className="hidden sm:flex items-center gap-2">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-                <Button size="sm">Get Started</Button>
+                {user ? (
+                  <>
+                    <Link href="/dashboard">
+                      <Button variant="ghost" size="sm" className="gap-2">
+                        {user.picture ? (
+                          <img
+                            src={user.picture}
+                            alt={user.name || "User"}
+                            className="size-6 rounded-full"
+                          />
+                        ) : (
+                          <User className="size-4" />
+                        )}
+                        <span className="hidden md:inline">
+                          {user.name || user.nickname || "Dashboard"}
+                        </span>
+                      </Button>
+                    </Link>
+                    <Link href="/auth/logout">
+                      <Button variant="ghost" size="icon">
+                        <LogOut className="size-4" />
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login?returnTo=/dashboard">
+                      <Button variant="ghost" size="sm">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link href="/auth/login?returnTo=/onboarding">
+                      <Button size="sm">Get Started</Button>
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Toggle */}
@@ -99,7 +158,11 @@ export function Navbar() {
                 className="md:hidden"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+                {mobileMenuOpen ? (
+                  <X className="size-5" />
+                ) : (
+                  <Menu className="size-5" />
+                )}
               </Button>
             </div>
           </div>
@@ -114,27 +177,76 @@ export function Navbar() {
           className="fixed top-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border md:hidden"
         >
           <nav className="container mx-auto px-4 py-6 flex flex-col gap-4">
-            <a href="#markets" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#markets"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Markets
             </a>
-            <a href="#community" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#community"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Community
             </a>
-            <a href="#watchlist" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#watchlist"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Watchlist
             </a>
-            <a href="#docs" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#docs"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Docs
             </a>
             <div className="flex gap-2 pt-4 border-t">
-              <Button variant="outline" className="flex-1 bg-transparent">
-                Sign In
-              </Button>
-              <Button className="flex-1">Get Started</Button>
+              {user ? (
+                <>
+                  <Link href="/dashboard" className="flex-1">
+                    <Button
+                      variant="outline"
+                      className="w-full bg-transparent gap-2"
+                    >
+                      {user.picture ? (
+                        <img
+                          src={user.picture}
+                          alt={user.name || "User"}
+                          className="size-5 rounded-full"
+                        />
+                      ) : (
+                        <User className="size-4" />
+                      )}
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Link href="/auth/logout" className="flex-1">
+                    <Button className="w-full">Log Out</Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login?returnTo=/dashboard"
+                    className="flex-1"
+                  >
+                    <Button variant="outline" className="w-full bg-transparent">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link
+                    href="/auth/login?returnTo=/onboarding"
+                    className="flex-1"
+                  >
+                    <Button className="w-full">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </motion.div>
       )}
     </>
-  )
+  );
 }

@@ -1,5 +1,8 @@
 services:
-  userdb:
+  # -----------------------------------------
+  # PostgreSQL Databases
+  # -----------------------------------------
+  user-db:
     image: postgres:16-alpine
     container_name: stocktok-userdb
     environment:
@@ -7,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${USERDB_PORT}:5432"
     volumes:
       - userdb_data:/var/lib/postgresql/data
     healthcheck:
@@ -68,7 +71,43 @@ services:
     ports:
       - "5168:8080"
     depends_on:
-      userdb:
+      user-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  news-service:
+    build:
+      context: .
+      dockerfile: backend/News/Dockerfile 
+    container_name: stocktok-news-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__NewsDatabase=${NEWS_DB_CONNECTION}
+      - NewsApiSettings__BaseUrl=https://api.marketaux.com/v1/
+      - NewsApiSettings__ApiToken=${MARKETAUX_API_TOKEN}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+    depends_on:
+      news-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  social-service:
+    build:
+      context: .
+      dockerfile: backend/Social/Dockerfile
+    container_name: stocktok-social-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__SocialDB=${SOCIAL_DB_CONNECTION}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__Audience=${AUTH0_AUDIENCE}
+    ports:
+      - "5169:8080"
+    depends_on:
+      social-db:
         condition: service_healthy
     restart: unless-stopped
 
@@ -130,7 +169,7 @@ services:
       - ReverseProxy__Clusters__user-cluster__Destinations__destination1__Address=http://user-service:8080/
       - ReverseProxy__Clusters__market-cluster__Destinations__destination1__Address=http://market-service:8000/
       - ReverseProxy__Clusters__social-cluster__Destinations__destination1__Address=http://social-service:8080/
-      - ReverseProxy__Clusters__news-cluster__Destinations__destination1__Address=http://news-service:8080/    
+      - ReverseProxy__Clusters__news-cluster__Destinations__destination1__Address=http://news-service:8080/
     ports:
       - "5069:8080"
     depends_on:

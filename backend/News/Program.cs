@@ -17,6 +17,23 @@ public class Program
 
         var app = builder.Build();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
+            {
+                var context = services.GetRequiredService<NewsDbContext>();
+
+                context.Database.Migrate();
+
+                Console.WriteLine("Database migrations applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+            }
+        }
+
         ConfigureMiddleware(app);
 
         app.Run();
@@ -26,38 +43,31 @@ public class Program
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
-        
+
         services.AddDbContext<NewsDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("NewsDatabase")));
-        
-        // Bind the "NewsApi" section from the 'appsettings.json' to the 'NewsApiSettings' class
-        // services.AddOptions<NewsApiSettings>()
-        //     .Bind(configuration.GetSection(NewsApiSettings.SectionName))
-        //     .ValidateDataAnnotations() // Ensures required fields are present at startup
-        //     .ValidateOnStart();
-        
+
         builder.Services.AddOptions<NewsApiSettings>()
-            .BindConfiguration("NewsApiSettings") 
+            .BindConfiguration("NewsApiSettings")
             .ValidateDataAnnotations()
             .ValidateOnStart();
-        
+
         // Register the Typed HttpClient with IHttpClientFactory
         services.AddHttpClient<NewsApiClient>((serviceProvider, client) =>
         {
             var settings = serviceProvider.GetRequiredService<IOptions<NewsApiSettings>>().Value;
             client.BaseAddress = new Uri(settings.BaseUrl);
-            // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); // TODO: This may be optional if the data returned (i.e., the data will be consumed) is already in JSON format.
         });
-        
+
         services.AddScoped<NewsService>();
-        
+
         // Prevent circular referencing
         services.AddControllers()
             .AddJsonOptions(options =>
-             {
-                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                 options.JsonSerializerOptions.WriteIndented = true;
-             });
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -71,7 +81,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        // app.UseHttpsRedirection();
+        // app.UseHttpsRedirection(); // Keep commented out for internal Docker services
 
         // The order of these is critical
         app.UseAuthentication();

@@ -75,9 +75,12 @@ public class Program
                     }
                 }
 
+                Console.WriteLine($"[UserService] Final Authority being used: '{authority}'");
+                Console.WriteLine($"[UserService] Audience being used: '{configuration["Auth0:Audience"]}'");
+                
                 options.Authority = authority;
                 options.Audience = configuration["Auth0:Audience"];
-
+                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = ClaimTypes.NameIdentifier,
