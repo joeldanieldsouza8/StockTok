@@ -21,7 +21,8 @@ export async function GET() {
 
     const response = await fetch(`${apiBaseUrl}/dummy`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
 

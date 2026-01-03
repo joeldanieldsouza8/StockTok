@@ -1,4 +1,7 @@
-﻿**/.dockerignore
+﻿!package.json
+!package-lock.json
+
+**/.dockerignore
 **/.env
 **/.git
 **/.gitignore

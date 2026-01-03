@@ -1,5 +1,8 @@
 {
-  "ExpandedNodes": [],
-  "SelectedNode": "\\StockTok.sln",
+  "ExpandedNodes": [
+    "",
+    "\\backend"
+  ],
+  "SelectedNode": "\\backend",
   "PreviewInSolutionExplorer": false
 }

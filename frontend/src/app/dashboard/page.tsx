@@ -11,10 +11,14 @@ import { WatchlistResponse, TopTickersResponse } from "@/types";
 import { WatchlistCard } from "@/components/watchlist/WatchlistCard";
 import { CreateWatchlistDialog } from "@/components/watchlist";
 import { TopTickerChart } from "@/components/watchlist/TopTickerChart";
+import { FeedCarousel } from "@/components/cards/FeedCarousel";
+import { FeedItem } from "@/types/feed";
+import { getFeedByTickers } from "@/services/FeedService";
 
 export default function WatchlistDashboard() {
   const [watchlists, setWatchlists] = useState<WatchlistResponse[]>([]);
   const [topTickers, setTopTickers] = useState<TopTickersResponse[]>([]);
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
@@ -31,6 +35,15 @@ export default function WatchlistDashboard() {
       ]);
       setWatchlists(watchlistsData);
       setTopTickers(topTickersData);
+
+      if (topTickersData.length > 0) {
+        try {
+          const newsData = await getFeedByTickers(topTickersData);
+          setFeedItems(newsData);
+        } catch (newsError) {
+          console.error("Failed to load news:", newsError);
+        }
+      }
     } catch (error) {
       console.error("Failed to load dashboard data:", error);
     } finally {
@@ -166,17 +179,13 @@ export default function WatchlistDashboard() {
                 <Newspaper className="h-6 w-6" />
                 Market News
               </h2>
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <div className="rounded-full bg-muted p-6 mb-4">
-                    <Newspaper className="h-12 w-12 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
-                  <p className="text-muted-foreground text-center max-w-sm">
-                    Real-time market news and analysis will be available here
-                  </p>
-                </CardContent>
-              </Card>
+              {feedItems.length > 0 ? (
+                <FeedCarousel items={feedItems} autoplay={false} />
+              ) : (
+                <p className="text-muted-foreground">
+                  No news available for your tickers.
+                </p>
+              )}
             </div>
           </div>
 

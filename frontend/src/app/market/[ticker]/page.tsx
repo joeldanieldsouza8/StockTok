@@ -1,70 +1,161 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// Simple client-side fallback for useParams so TS doesn't need 'next/navigation'
-function useParams(): { ticker?: string } {
-  const [params, setParams] = useState<{ ticker?: string }>({});
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const parts = window.location.pathname.split("/").filter(Boolean);
-    // assumes URL like /market/<ticker>
-    const ticker = parts.length ? parts[parts.length - 1] : undefined;
-    setParams({ ticker });
-  }, []);
-
-  return params;
-}
+import Link from "next/link";
 import { getFundamentals, getHistory } from "@/services/market.service";
 import { TickerFundamentalData, OHLCPoint } from "@/types/market";
 import { FundamentalsDisplay, StockChart } from "@/components/market";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, TrendingUp, TrendingDown, Loader2, AlertCircle, MessageSquare } from "lucide-react";
 
-export default function MarketPage() {
-  const params = useParams();
-  const ticker = params.ticker as string;
+function useParams(): { ticker?: string } {
+    const [params, setParams] = useState<{ ticker?: string }>({});
 
-  const [fundamentals, setFundamentals] =
-    useState<TickerFundamentalData | null>(null);
-  const [history, setHistory] = useState<OHLCPoint[]>([]); // New state for history
-  const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const parts = window.location.pathname.split("/").filter(Boolean);
+        const rawTicker = parts.length ? parts[parts.length - 1] : undefined;
+        const ticker = rawTicker ? decodeURIComponent(rawTicker) : undefined;
+        setParams({ ticker });
+    }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!ticker) return;
+    return params;
+}
 
-      // 1. Fetch Fundamentals
-      const fundData = await getFundamentals(ticker);
-      setFundamentals(fundData);
+export default function TickerPage() {
+    const params = useParams();
+    const ticker = params.ticker as string;
 
-      // 2. Fetch Chart History (Now active!)
-      const historyData = await getHistory(ticker);
-      setHistory(historyData);
+    const [fundamentals, setFundamentals] = useState<TickerFundamentalData | null>(null);
+    const [history, setHistory] = useState<OHLCPoint[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-      setLoading(false);
+    // Calculate price change
+    const latestPrice = history.length > 0 ? history[history.length - 1]?.close : null;
+    const previousPrice = history.length > 1 ? history[history.length - 2]?.close : null;
+    const priceChange = latestPrice && previousPrice
+        ? ((latestPrice - previousPrice) / previousPrice) * 100
+        : null;
+
+    useEffect(() => {
+        async function fetchData() {
+            if (!ticker) return;
+
+            setLoading(true);
+            setError(null);
+
+            try {
+                const [fundData, historyData] = await Promise.all([
+                    getFundamentals(ticker),
+                    getHistory(ticker),
+                ]);
+
+                if (!fundData) {
+                    setError(`Ticker "${ticker}" not found`);
+                } else {
+                    setFundamentals(fundData);
+                    setHistory(historyData);
+                }
+            } catch (err) {
+                setError("Failed to load market data");
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, [ticker]);
+
+    // Loading state
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-background">
+                <div className="container mx-auto px-4 py-12">
+                    <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="text-muted-foreground">Loading market data for {ticker}...</p>
+                    </div>
+                </div>
+            </main>
+        );
     }
-    fetchData();
-  }, [ticker]);
 
-  if (loading)
-    return <div className="p-10 text-white">Loading market data...</div>;
-  if (!fundamentals)
-    return <div className="p-10 text-red-500">Ticker not found.</div>;
+    // Error state
+    if (error || !fundamentals) {
+        return (
+            <main className="min-h-screen bg-background">
+                <div className="container mx-auto px-4 py-12">
+                    <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+                        <AlertCircle className="h-12 w-12 text-destructive" />
+                        <h1 className="text-2xl font-bold">{error || "Ticker not found"}</h1>
+                        <p className="text-muted-foreground">
+                            We couldn't find any data for this symbol.
+                        </p>
+                        <Link href="/market">
+                            <Button variant="outline" className="mt-4">
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Back to Markets
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </main>
+        );
+    }
 
-  return (
-      <main className="min-h-screen bg-black p-8">
-          {/* The Chart Section - now with ticker prop for infinite scroll */}
-          <div className="w-full bg-gray-900 rounded-lg mb-8 border border-gray-800 overflow-hidden">
-              {history.length > 0 ? (
-                  <StockChart data={history} ticker={ticker} />
-              ) : (
-                  <div className="h-[400px] flex items-center justify-center text-gray-500">
-                      No chart data available
-                  </div>
-              )}
-          </div>
+    return (
+        <main className="min-h-screen bg-background">
+            <div className="container mx-auto px-4 py-6">
+                {/* Header */}
+                <div className="mb-6">
+                    <Link
+                        href="/market"
+                        className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-4"
+                    >
+                        <ArrowLeft className="mr-1 h-4 w-4" />
+                        Back to Markets
+                    </Link>
 
-      {/* 2. The Fundamentals Section */}
-      <FundamentalsDisplay data={fundamentals} />
-    </main>
-  );
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* Left: Ticker & Company Info */}
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-3xl font-bold">{ticker}</h1>
+                                {fundamentals.sector && (
+                                    <Badge variant="secondary">{fundamentals.sector}</Badge>
+                                )}
+                            </div>
+                            <p className="text-muted-foreground mt-1">
+                                {fundamentals.companyName}
+                            </p>
+                        </div>
+
+                        {/* Right: Discussion Button */}
+                        <Link href={`/feed/${encodeURIComponent(ticker)}`}>
+                            <Button className="gap-2">
+                                <MessageSquare className="h-4 w-4" />
+                                <span>Discussion</span>
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Chart Section */}
+                <Card className="mb-8 overflow-hidden">
+                    {history.length > 0 ? (
+                        <StockChart data={history} ticker={ticker} />
+                    ) : (
+                        <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                            No chart data available
+                        </div>
+                    )}
+                </Card>
+
+                {/* Fundamentals Section */}
+                <FundamentalsDisplay data={fundamentals} />
+            </div>
+        </main>
+    );
 }

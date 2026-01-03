@@ -1,15 +1,24 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  isLoggedIn: boolean;
+}
+
+export function HeroSection({ isLoggedIn }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden">
       {/* Background Image - User will add this later */}
       <div className="absolute inset-0 z-0">
-        <img src="/modern-dark-abstract-trading-background.png" alt="Hero background" className="w-full h-full object-cover" />
+        <img
+          src="/modern-dark-abstract-trading-background.png"
+          alt="Hero background"
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/40 to-background" />
       </div>
 
@@ -26,20 +35,29 @@ export function HeroSection() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance">
-            Trade smarter with <span className="text-primary">charts, community</span> and alerts
+            Trade smarter with{" "}
+            <span className="text-primary">charts, community</span> and alerts
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground text-pretty max-w-2xl mx-auto">
-            StockTok combines TradingView-style charts with a Reddit-like community and real-time alerts for your
-            watchlist.
+            StockTok combines TradingView-style charts with a Reddit-like
+            community and real-time alerts for your watchlist.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
-            <Button size="lg" className="text-base group">
+            {isLoggedIn ? (
+              <Button>Go to Dashboard</Button>
+            ) : (
+              <Button size="lg" className="text-base group">
               Get Started
               <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button size="lg" variant="outline" className="text-base bg-transparent">
+            )}
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-base bg-transparent"
+            >
               Explore Markets
             </Button>
           </div>
@@ -61,5 +79,5 @@ export function HeroSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
