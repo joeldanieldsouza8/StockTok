@@ -1,5 +1,5 @@
 import { auth0 } from "@/lib/auth0";
-import { Post, PostObject } from "@/types/post";
+import { PostItem, PostItemObject } from "lib/types/post-item";
 
 // Helper to determine the correct base URL
 function getBaseUrl() {
@@ -24,7 +24,7 @@ function makeid(length: number) {
   return result;
 }
 
-export async function createPost(post: PostObject): Promise<Post> {
+export async function createPost(post: PostItemObject): Promise<PostItem> {
   post.id = makeid(5);
 
   const baseUrl = getBaseUrl();
@@ -55,11 +55,11 @@ export async function createPost(post: PostObject): Promise<Post> {
     throw new Error(`Failed to create post: ${response.status} ${errorText}`);
   }
 
-  const newPost: Post = await response.json();
+  const newPost: PostItem = await response.json();
   return newPost;
 }
 
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts(): Promise<PostItem[]> {
   const baseUrl = getBaseUrl();
 
   const response = await fetch(`${baseUrl}/api/posts`, {
@@ -79,7 +79,7 @@ export async function getAllPosts(): Promise<Post[]> {
 
 export async function getPostsByTickers(
   tickers: string | string[]
-): Promise<Post[]> {
+): Promise<PostItem[]> {
   const symbols = Array.isArray(tickers) ? tickers : [tickers];
 
   // Safety check for empty lists
