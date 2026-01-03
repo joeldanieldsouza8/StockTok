@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
+import NewsTab from "@/app/feed/[symbol]/_components/news/news-tab";
 import { Button } from "components/ui/button";
 import { ArrowLeft, BarChart3, MessageSquare, TrendingUp } from "lucide-react";
 import PostsTab from "@/app/feed/[symbol]/_components/posts/posts-tab";
@@ -57,11 +58,27 @@ export default function FeedPage({ params }: FeedPageProps) {
                             <TrendingUp className="h-4 w-4" />
                             Posts
                         </TabsTrigger>
+
+                        <TabsTrigger 
+                            value="news"
+                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2"
+                        >
+                            <TrendingUp className="h-4 w-4" />
+                            News
+                        </TabsTrigger>
+
+
                     </TabsList>
 
                     <TabsContent value="posts" className="mt-0">
                         <PostsTab symbol={upperSymbol} />
                     </TabsContent>
+                    
+                    <TabsContent value="news" className="mt-0">
+                        <NewsTab symbol={upperSymbol} />
+                    </TabsContent>
+                    
+                    
                 </Tabs>
             </div>
         </main>
