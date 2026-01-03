@@ -2,9 +2,9 @@ namespace Posts.DTOs.Comments;
 
 public class CommentResponseDto
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     
-    public string Body { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
     
     public string AuthorId { get; set; } = string.Empty;
     

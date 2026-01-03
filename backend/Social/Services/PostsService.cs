@@ -7,6 +7,8 @@ using Posts.Models;
 using Social.Data;
 using Social.Models;
 
+using Posts.DTOs.Comments;
+
 namespace Posts.Services;
 
 public class PostsService
@@ -51,11 +53,12 @@ public class PostsService
     public async Task<List<PostResponseDto>> GetPostsAsync(string ticker)
     {
         // Query the database for all the posts by the ticker
-        var posts = await _context.Posts
-            .AsNoTracking()
-            .Where(x => x.ticker == ticker)
-            .OrderByDescending(x => x.time_created)
-            .ToListAsync();
+    var posts = await _context.Posts
+        .AsNoTracking()
+        .Include(p => p.comments)
+        .Where(x => x.ticker == ticker)
+        .OrderByDescending(x => x.time_created)
+        .ToListAsync();
         
         return posts
             .Select(MapToDto)
@@ -67,6 +70,7 @@ public class PostsService
         // Query the database for the post
         var post = await _context.Posts
             .AsNoTracking()
+            .Include(p => p.comments)
             .FirstOrDefaultAsync(p => p.id == id);
 
         return post != null ? MapToDto(post) : new PostResponseDto();
@@ -131,7 +135,19 @@ public class PostsService
             Title = post.title,
             Body = post.description,
             CreatedAt = post.time_created,
-            Ticker = post.ticker
+            Ticker = post.ticker,
+
+            Comments = post.comments?
+                .OrderBy(c => c.CreatedAt)
+                .Select(c => new CommentResponseDto
+                {
+                    Id = c.Id,
+                    Content = c.Body,
+                    AuthorId = c.AuthorId,
+                    PostId = c.PostId,
+                    CreatedAt = c.CreatedAt
+                })
+                .ToList() ?? new()
         };
     }
 }

@@ -1,64 +1,74 @@
-import { auth0 } from "src/lib/auth0";
-
-import {NewsArticle} from "lib/types/news-item";
-import {httpClient} from "lib/api/fetch-client";
 import { PostItem, PostItemObject } from "../types/post-item";
-import { Header } from "next/dist/lib/load-custom-routes";
 
-
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || ""
-
-
-
-function makeid(length: number) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+const getBaseUrl = () => {
+    if (typeof window !== 'undefined') {
+        return "";  // Client-side: relative URLs work
     }
-    return result;
+    // Server-side: need absolute URL
+    return process.env.APP_BASE_URL || "http://localhost:3000";
+};
+
+export async function getAllPosts(): Promise<PostItem[]> {
+    const baseUrl = getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/social/posts`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch posts: ${response.status}`);
+    }
+
+    return response.json();
 }
 
 export async function createPost(post: PostItemObject): Promise<PostItem> {
-
-    post.id = makeid(5);
-
-    const endpoint = `${BACKEND_BASE_URL}/api/posts`
-    // const { token } = await auth0.getAccessToken(); // to add once backend is created
-
-    const headers: Headers = new Headers()
-    headers.set("Content-Type", "application/json")
-    headers.set("Accept", "application/json")
-
-    const request: RequestInfo = new Request(endpoint, {
-        method: "POST", 
-        headers: headers,
-        body: JSON.stringify(post)
-    })
-
-    const response = await fetch(request); 
+    const baseUrl = getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/social/posts`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post),
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to create post: ${response.status}`);
     }
-    const newPost: PostItem = await response.json();
-    return newPost;
 
+    return response.json();
 }
 
+// export async function addComment(postId: string, content: string): Promise<Comment> {
+//     const baseUrl = getBaseUrl();
+//     const response = await fetch(`${baseUrl}/api/comments`, {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ postId, content }),
+//     });
 
-export async function getAllPosts(): Promise<PostItem[]> {
-  const response = await fetch(`${BACKEND_BASE_URL}/api/posts`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+//     if (!response.ok) {
+//         throw new Error(`Failed to add comment: ${response.status}`);
+//     }
+
+//     return response.json();
+// }
+
+export async function addComment(postId: string, content: string) {
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}/api/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ postId, content }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch posts');
+    throw new Error(`Failed to add comment: ${response.status}`);
   }
 
-  return response.json();
+  return response.json(); // backend DTO
 }

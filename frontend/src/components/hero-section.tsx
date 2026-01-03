@@ -46,19 +46,12 @@ export function HeroSection({ isLoggedIn }: HeroSectionProps) {
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
             {isLoggedIn ? (
-              <Link href="/dashboard">
-                <Button size="lg" className="text-base group">
-                  Go to Dashboard
-                  <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
+              <Button>Go to Dashboard</Button>
             ) : (
-              <Link href="/auth/login?returnTo=/onboarding">
-                <Button size="lg" className="text-base group">
-                  Get Started
-                  <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
+              <Button size="lg" className="text-base group">
+              Get Started
+              <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
             )}
             <Button
               size="lg"

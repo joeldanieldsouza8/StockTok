@@ -1,3 +1,5 @@
+using Posts.DTOs.Comments;
+
 namespace Posts.DTOs.Posts;
 
 public class PostResponseDto
@@ -16,4 +18,6 @@ public class PostResponseDto
     
     // Foreign Keys
     public string AuthorId { get; set; } = string.Empty;
-}
+
+    public List<CommentResponseDto> Comments { get; set; } = new();
+}   

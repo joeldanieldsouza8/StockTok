@@ -1,12 +1,3 @@
-# ===========================================
-# StockTok Development Environment
-# ===========================================
-# Usage:
-#   docker compose up -d          # Start all services
-#   docker compose logs -f        # View logs
-#   docker compose down           # Stop all services
-# ===========================================
-
 services:
   # -----------------------------------------
   # PostgreSQL Databases
@@ -66,9 +57,6 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # -----------------------------------------
-  # User Service (.NET)
-  # -----------------------------------------
   user-service:
     build:
       context: .
@@ -123,9 +111,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # -----------------------------------------
-  # Market Data Service (Python/FastAPI)
-  # -----------------------------------------
+
   market-service:
     build:
       context: backend/MarketDataService
@@ -135,9 +121,6 @@ services:
       - "8000:8000"
     restart: unless-stopped
 
-  # -----------------------------------------
-  # API Gateway (.NET / YARP)
-  # -----------------------------------------
   api-gateway:
     build:
       context: .
@@ -165,31 +148,33 @@ services:
         condition: service_started
     restart: unless-stopped
 
-  # -----------------------------------------
-  # Frontend (Next.js)
-  # -----------------------------------------
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - BACKEND_API_URL=http://localhost:5069
-    container_name: stocktok-frontend
-    environment:
-      - AUTH0_SECRET=${AUTH0_SECRET}
-      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
-      - APP_BASE_URL=http://localhost:3000
-      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
-      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
-      - AUTH0_SCOPE=openid profile email
-      - BACKEND_API_URL=http://api-gateway:8080 # must be added as runtime env var for auth to work
-    ports:
-      - "3000:3000"
-    depends_on:
-      api-gateway:
-        condition: service_started
-    restart: unless-stopped
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+        args:
+          - BACKEND_API_URL=http://localhost:5069
+      container_name: stocktok-frontend
+      environment:
+        - BACKEND_API_URL=http://api-gateway:8080
+        - AUTH0_SECRET=${AUTH0_SECRET}
+        - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+        - APP_BASE_URL=http://localhost:3000
+        - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+        - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+        - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+        - AUTH0_SCOPE=openid profile email offline_access
+
+        - NEXT_PUBLIC_AUTH0_DOMAIN=${AUTH0_DOMAIN}
+        - NEXT_PUBLIC_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+        - NEXT_PUBLIC_AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+        - NEXT_PUBLIC_APP_BASE_URL=http://localhost:3000
+      ports:
+        - "3000:3000"
+      depends_on:
+        api-gateway:
+          condition: service_started
+      restart: unless-stopped
 
 volumes:
   userdb_data:

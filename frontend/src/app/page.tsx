@@ -1,4 +1,10 @@
-import { Navbar } from "@/components/navbar"
+// import { Navbar, Footer } from "@/components/layout/Navbar"
+// import { HeroSection, CommunitySection, WatchlistSection, FeaturesSection } from "@/components/home"
+// import { ChartPreview, MarketOverview } from "@/components/market"
+// import { LoadingScreen } from "@/components/shared"
+// import { auth0 } from "@/lib/auth0"
+
+import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/footer"
 import { HeroSection } from "@/components/hero-section"
 import { CommunitySection } from "@/components/community-section"
@@ -36,5 +42,5 @@ export default async function Home() {
       </main>
       <Footer />
     </>
-  );
+  )
 }

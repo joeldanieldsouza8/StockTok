@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using News.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace News.Controllers;
 

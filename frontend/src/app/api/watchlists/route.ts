@@ -1,7 +1,7 @@
 import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
 
-const API_BASE_URL = process.env.BACKEND_API_URL || "http://api-gateway:8080";
+const API_BASE_URL = process.env.BACKEND_API_URL;
 
 export async function GET() {
   try {
