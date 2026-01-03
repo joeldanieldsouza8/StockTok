@@ -2,5 +2,5 @@ namespace Posts.DTOs.Comments;
 
 public class UpdateCommentDto
 {
-    public string Body { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
 }

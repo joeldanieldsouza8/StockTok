@@ -1,20 +1,39 @@
-import { auth0 } from "@/lib/auth0"; // Adjust path to your file
+import { auth0 } from "@/lib/auth0";
 import { NextRequest, NextResponse } from 'next/server';
+
+
+
+const getBaseUrl = () => {
+    if (typeof window !== 'undefined') {
+        return "";  // Client-side: relative URLs work
+    }
+    // Server-side: need absolute URL
+    return process.env.APP_BASE_URL || "http://localhost:3000";
+};
+
 
 export async function POST(req: NextRequest) {
   try {
-    // chekcing session
+    // checking session
     const session = await auth0.getSession();
     if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { token }  = await auth0.getAccessToken();
+    const { token } = await auth0.getAccessToken({
+      audience: process.env.AUTH0_AUDIENCE,
+    });
+
     console.log("DEBUG TOKEN:", token);
 
     const body = await req.json();
 
+
+    
+
     // forwarding to backend
+    const baseUrl = getBaseUrl();
+    // const backendResponse = await fetch(`${process.env.BACKEND_API_URL}/api/social/comments`, {
     const backendResponse = await fetch(`${process.env.BACKEND_API_URL}/api/comments`, {
       method: 'POST',
       headers: {
@@ -23,7 +42,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         PostId: body.postId, 
-        Body: body.content,  
+        Content: body.content,  
       }),
     });
 

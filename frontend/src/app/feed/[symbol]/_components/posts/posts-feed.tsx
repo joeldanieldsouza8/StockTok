@@ -93,14 +93,24 @@ export default function PostsFeed({ symbol, initialPosts }: PostsFeedProps) {
         setError(null);
 
         try {
-            // Just call addComment - it will handle authentication internally
-            const updatedPost = await addComment(postId, commentText);
-            
-            // Update the specific post in the list with its new comment
-            setPosts(prev => prev.map(p => p.id === postId ? updatedPost : p));
-            
-            // Clear the comment text after successful submission
-            setCommentText("");
+        const created = await addComment(postId, commentText);
+
+        const newComment = {
+            id: created.data.id,
+            username: (currentUsername as string) ?? "unknown",
+            content: created.data.content,
+            time_created: created.data.createdAt,
+        };
+
+        setPosts(prev =>
+            prev.map(p =>
+            p.id === postId
+                ? { ...p, comments: [...(p.comments ?? []), newComment] }
+                : p
+            )
+        );
+
+        setCommentText("");
         } catch (error) {
             console.error('Error adding comment:', error);
             setError('Failed to add comment. Please try again.');

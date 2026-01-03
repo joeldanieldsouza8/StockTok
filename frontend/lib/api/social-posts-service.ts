@@ -41,19 +41,34 @@ export async function createPost(post: PostItemObject): Promise<PostItem> {
     return response.json();
 }
 
-export async function addComment(postId: string, content: string): Promise<PostItem> {
-    const baseUrl = getBaseUrl();
-    const response = await fetch(`${baseUrl}/api/social/comments`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId, content }),
-    });
+// export async function addComment(postId: string, content: string): Promise<Comment> {
+//     const baseUrl = getBaseUrl();
+//     const response = await fetch(`${baseUrl}/api/comments`, {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ postId, content }),
+//     });
 
-    if (!response.ok) {
-        throw new Error(`Failed to add comment: ${response.status}`);
-    }
+//     if (!response.ok) {
+//         throw new Error(`Failed to add comment: ${response.status}`);
+//     }
 
-    return response.json();
+//     return response.json();
+// }
+
+export async function addComment(postId: string, content: string) {
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}/api/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ postId, content }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to add comment: ${response.status}`);
+  }
+
+  return response.json(); // backend DTO
 }
