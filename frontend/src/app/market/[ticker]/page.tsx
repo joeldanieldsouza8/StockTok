@@ -8,7 +8,7 @@ import { FundamentalsDisplay, StockChart } from "@/components/market";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, TrendingDown, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, Loader2, AlertCircle, MessageSquare } from "lucide-react";
 
 function useParams(): { ticker?: string } {
     const [params, setParams] = useState<{ ticker?: string }>({});
@@ -16,7 +16,6 @@ function useParams(): { ticker?: string } {
     useEffect(() => {
         if (typeof window === "undefined") return;
         const parts = window.location.pathname.split("/").filter(Boolean);
-        // Decode URL component to handle special characters like ^ in indices (^DJI, ^GSPC)
         const rawTicker = parts.length ? parts[parts.length - 1] : undefined;
         const ticker = rawTicker ? decodeURIComponent(rawTicker) : undefined;
         setParams({ ticker });
@@ -120,6 +119,7 @@ export default function TickerPage() {
                     </Link>
 
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* Left: Ticker & Company Info */}
                         <div>
                             <div className="flex items-center gap-3">
                                 <h1 className="text-3xl font-bold">{ticker}</h1>
@@ -132,27 +132,13 @@ export default function TickerPage() {
                             </p>
                         </div>
 
-                        {/* Price Display */}
-                        {latestPrice != null && (
-                            <div className="text-right">
-                                <div className="text-3xl font-bold">${latestPrice.toFixed(2)}</div>
-                                {priceChange != null && (
-                                    <div className={`flex items-center justify-end gap-1 text-sm font-medium ${
-                                        priceChange >= 0 ? "text-success" : "text-destructive"
-                                    }`}>
-                                        {priceChange >= 0 ? (
-                                            <TrendingUp className="h-4 w-4" />
-                                        ) : (
-                                            <TrendingDown className="h-4 w-4" />
-                                        )}
-                                        <span>
-                      {priceChange >= 0 ? "+" : ""}
-                                            {priceChange.toFixed(2)}%
-                    </span>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        {/* Right: Discussion Button */}
+                        <Link href={`/feed/${encodeURIComponent(ticker)}`}>
+                            <Button className="gap-2">
+                                <MessageSquare className="h-4 w-4" />
+                                <span>Discussion</span>
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
