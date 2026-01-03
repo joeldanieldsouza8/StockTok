@@ -150,7 +150,7 @@ public class Program
 
         // List of path prefixes that require an authenticated user.
         // Modify this list to protect other routes as needed.
-        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy", "/api/posts", "/api/comments", "/api/news", "/api/feed", "/feed", "api/"};
+        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy", "/api/posts", "/api/comments", "/api/news", "/api/feed", "/feed", "/api/social/posts"};
 
         // Inline middleware: only challenge (401) if the request targets a protected
         // prefix and the user is not authenticated. Other routes are left untouched.
