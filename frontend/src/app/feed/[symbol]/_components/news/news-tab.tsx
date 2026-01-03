@@ -14,7 +14,7 @@ export default async function NewsTab({ symbol }: NewsTabProps) {
     try {
         const { token } = await auth0.getAccessToken();
 
-        const response = await fetch(`${apiBaseUrl}/api/news/${symbol}`, {
+        const response = await fetch(`${apiBaseUrl}/api/news?symbols=${symbol}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,

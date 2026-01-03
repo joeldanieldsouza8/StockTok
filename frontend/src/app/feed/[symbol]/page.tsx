@@ -15,16 +15,19 @@ export default function FeedPage({ params }: FeedPageProps) {
     const upperSymbol = symbol.toUpperCase();
     
     return (
-        <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="mx-auto w-fit mt-10">
-                <TabsTrigger value="posts">Posts</TabsTrigger>
-                <TabsTrigger value="news">News</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="posts">
-                <PostsTab symbol={upperSymbol} />
-            </TabsContent>
-        
-        </Tabs>
-    )
+      <Tabs defaultValue="posts" className="w-full">
+        <TabsList className="mx-auto w-fit mt-10">
+          <TabsTrigger value="posts">Posts</TabsTrigger>
+          <TabsTrigger value="news">News</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="posts">
+          <PostsTab symbol={upperSymbol} />
+        </TabsContent>
+
+        <TabsContent value="news">
+          <NewsTab symbol={upperSymbol} />
+        </TabsContent>
+      </Tabs>
+    );
 }
