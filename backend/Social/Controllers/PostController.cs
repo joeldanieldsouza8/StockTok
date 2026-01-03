@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Posts.Services;
 using Social.Data;
 using Social.Models;
 using Social.Utilities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Social.Controllers
 {
@@ -16,10 +17,12 @@ namespace Social.Controllers
     public class PostController : ControllerBase
     {
         private readonly PostDBContext _context;
+        private readonly PostsService _postsService;
 
-        public PostController(PostDBContext context)
+        public PostController(PostDBContext context, PostsService postsService)
         {
             _context = context;
+            _postsService = postsService;
         }
 
         [EnableCors("_myAllowSpecificOrigins")]
@@ -42,6 +45,14 @@ namespace Social.Controllers
             return await _context.Posts.ToListAsync();
         }
 
+        // GET: api/posts?ticker=TSLA
+        [HttpGet]
+        public async Task<IActionResult> GetPosts([FromQuery] string ticker)
+        {
+            var posts = await _postsService.GetPostsAsync(ticker);
+
+            return Ok(posts);
+        }
 
         [EnableCors("_myAllowSpecificOrigins")]
         [HttpPost]

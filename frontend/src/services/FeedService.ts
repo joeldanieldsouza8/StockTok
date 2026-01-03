@@ -1,6 +1,5 @@
 import { getNewsArticlesByTickers } from "./NewsService";
 import { FeedItem } from "@/types/feed";
-import { TopTickersResponse } from "@/types";
 import { getPostsByTickers } from "lib/api/posts-service";
 
 /**
