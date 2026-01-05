@@ -10,7 +10,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 **/.idea/
+.vs/
 *.user
+backend/.vs
 
 out/
 publish/
@@ -41,6 +43,18 @@ backend/User/appsettings.json
 backend\User\appsettings.json
 backend\News\appsettings.json
 backend/News/appsettings.json
+backend/StockTok/appsettings.json
+backend/StockTok/appsettings.Development.json
+backend\Social\appsettings.json
+backend/Social/appsettings.json
+
+.vs
+env
+appsettings.json
+appsettings.Development.json
+
+# Ignore environment files for services (local secrets)
+backend/User/.env
 
 # Backend (For Mac)
 .DS_Store

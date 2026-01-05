@@ -2,13 +2,8 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 // -----------------------------------------------------------------------------
@@ -155,7 +150,7 @@ public class Program
 
         // List of path prefixes that require an authenticated user.
         // Modify this list to protect other routes as needed.
-        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy" /* add other prefixes here */ };
+        var protectedPrefixes = new[] { "/api/users", "/api/watchlists", "/dummy", "/api/posts", "/api/comments", "/api/news", "/api/feed", "/feed", "/api/social/posts"};
 
         // Inline middleware: only challenge (401) if the request targets a protected
         // prefix and the user is not authenticated. Other routes are left untouched.
@@ -180,7 +175,7 @@ public class Program
         app.MapControllers();
 
         // Map the reverse proxy last so controller routes (health, gateway endpoints)
+        // Map YARP last
         // take precedence over proxied routes.
         app.MapReverseProxy();
-    }
-}
+    }}

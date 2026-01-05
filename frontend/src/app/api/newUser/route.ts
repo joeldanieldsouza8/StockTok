@@ -1,5 +1,5 @@
 'use server'
-import { auth0 } from "@/src/lib/auth0";
+import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -27,7 +27,14 @@ export async function GET() {
       },
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data;
+    
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch {
+        data = {rawResponse: text};
+    }
 
     if (!response.ok) {
       // Log detailed error for debugging
@@ -41,7 +48,7 @@ export async function GET() {
       return NextResponse.json(
         {
           error: data.error || data.message || `API responded with status ${response.status}: ${response.statusText}`,
-          details: data.details || "No additional details provided.",
+          details: data.details || text || "No response body.",
         },
         { status: response.status }
       );

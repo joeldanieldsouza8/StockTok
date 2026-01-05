@@ -2,6 +2,7 @@ import yfinance as yf
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field #tools to create a strict template for the JSON data
 from typing import Optional, Any #typing helpers . Optional means it can be the var specified or zero. 
+from datetime import datetime, timezone
 
 from services.utility import change_labels
 
@@ -75,9 +76,16 @@ async def get_ticker_fundamentals(ticker: str):
 
         #check if we got data
 
-        if not info or info.get('quoteType') == 'NONE' or not info.get('marketCap'):
+        if not info or info.get('quoteType') == 'NONE':
             raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
 
+        # For regular stocks, verify they have market data
+        # Indices (quoteType='INDEX') won't have marketCap but are still valid
+        quote_type = info.get('quoteType', '')
+        is_index = quote_type == 'INDEX'
+
+        if not is_index and not info.get('marketCap') and not info.get('regularMarketPrice'):
+            raise HTTPException(status_code=404, detail=f"Ticker '{ticker}' not found or no data available.")
  #  Perform  the necessary Calculations 
         net_debt = None
         net_debt_to_ebitda = None
@@ -215,20 +223,48 @@ async def ticker_history_standard(
 @app.get("/api/market/history/{ticker}/{earliest_date}")
 async def ticker_history(ticker: str, earliest_date: int):
     
-    try:        
+    try:
+        ticker = ticker.strip().upper()
         symbol = yf.Ticker(ticker)
-        new_early_date = earliest_date - 2592000 # ~1 month in epoch time
-        data = symbol.history(start=new_early_date, end=earliest_date, interval='1d') # end is not inclusive
-        if data.empty:
-            raise HTTPException(status_code=404, detail=f"data for {ticker} is not found, is empty, or no data available.")
-
-        return change_labels(data)
         
-    
+        # Convert epoch timestamps to datetime objects
+        end_dt = datetime.fromtimestamp(earliest_date, tz=timezone.utc)
+        
+        # Go back ~3 months (90 days) from the earliest date
+        start_epoch = earliest_date - 7776000  # 90 days in seconds
+        start_dt = datetime.fromtimestamp(start_epoch, tz=timezone.utc)
+        
+        print(f"Fetching history for {ticker} from {start_dt} to {end_dt}")
+        
+        # Fetch history - yfinance accepts datetime objects
+        data = symbol.history(start=start_dt, end=end_dt, interval='1d')
+        
+        if data.empty:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"No historical data found for {ticker} in the requested range."
+            )
+        
+        # Reset index to make Date a column, then convert to records
+        data = data.reset_index()
+        
+        # Format the response - convert Timestamp to ISO string
+        result = []
+        for _, row in data.iterrows():
+            result.append({
+                "Date": row['Date'].isoformat() if hasattr(row['Date'], 'isoformat') else str(row['Date']),
+                "Open": float(row['Open']) if row['Open'] else None,
+                "High": float(row['High']) if row['High'] else None,
+                "Low": float(row['Low']) if row['Low'] else None,
+                "Close": float(row['Close']) if row['Close'] else None,
+                "Volume": int(row['Volume']) if row['Volume'] else None,
+            })
+        
+        return result
+        
     except HTTPException as e:
-        # Re-raise HTTP exceptions directly
         raise e
     except Exception as e:
-        # Catch any other unexpected errors
+        print(f"Error fetching history: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
     
