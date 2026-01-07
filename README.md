@@ -26,16 +26,21 @@ The application is deployed and accessible at:
 2. **Navigate to Dashboard**
    - After signing in, click **"Go to Dashboard"** to access the main dashboard
    - Alternatively, navigate directly to `/dashboard`
+  
+3. **Explore Markets**
+   - You can explore various stocks and their market data such as charts etc. by either clicking the stock in their watchlist or if you want to view the range of stocks available, you can navigate to `/market` or for a specific ticker use `/market/[ticker]` where `[ticker]` needs to be replaced by the ticker of a stock such as "NVDA" or "AAPL"
+   <image>
 
 3. **Create and Manage Watchlists**
    - Create a new watchlist from the dashboard
    - Add stock tickers to your watchlist
-   - Click on any ticker in your watchlist to view its social feed ( Alternatively, navigate to `/feed/[ticker]`)
 
 
 
 4. **Interact with Social Feeds**
-   - View posts and discussions about specific stocks
+   - View posts and discussions about specific stocks by going going to a stock in market or going to your watchlist and clicking the button shown below:
+   <image>
+   - Alternatively, navigate to `/feed/[ticker]`
    - Create posts about stocks you're tracking
    - Comment on other users' posts
 
