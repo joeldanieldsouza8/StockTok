@@ -1,8 +1,11 @@
 # StockTok
 
-Stocktok is a social stock analysis platform that uses microservices architecture to stream real-time stock data and deliver insights for users on various stocks. Users can also view social feeds for various stocks and news.
+Stocktok is a social stock analysis platform that uses the microservices architecture to stream real-time stock data and deliver insights for users on various stocks. Users can also view social feeds for various stocks and news.
 
 ## Architecture
+
+https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/architecture.jpg
+![alt text](https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/architecture.jpg "StockTok Architecture")
 
 ## Getting Started
 
@@ -29,7 +32,7 @@ The application is deployed and accessible at:
   
 3. **Explore Markets**
    - You can explore various stocks and their market data such as charts etc. by either clicking the stock in their watchlist or if you want to view the range of stocks available, you can navigate to `/market` or for a specific ticker use `/market/[ticker]` where `[ticker]` needs to be replaced by the ticker of a stock such as "NVDA" or "AAPL"
-   <image>
+   ![alt text](https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/market-apple.jpg "Market data example for AAPL")
 
 3. **Create and Manage Watchlists**
    - Create a new watchlist from the dashboard `/dashboard`
@@ -38,8 +41,8 @@ The application is deployed and accessible at:
 
 
 4. **Interact with Social Feeds**
-   - View posts and discussions about specific stocks by going going to a stock in market or going to your watchlist and clicking the button shown below:
-   <image>
+   - View posts and discussions about specific stocks by going going to a stock in market or going to your watchlist and clicking the button shown below and then clicking DISCUSSION:
+   ![alt text](https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/dashboard-feed.jpg "Feed example for APPLE (AAPL)")
    - Alternatively, navigate to `/feed/[ticker]`
    - Create posts about stocks you're tracking
    - Comment on other users' posts
