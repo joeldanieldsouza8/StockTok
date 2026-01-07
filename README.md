@@ -91,7 +91,7 @@ Please be aware of the following minor issues:
 ---
 
 ### Affiliations
-- This project is affiliated with University of Surrey
+- This project is affiliated with University of Surrey for ENGINEERING INTERNET SCALE SYSTEMS (COM3033)
 
 ## License
 
