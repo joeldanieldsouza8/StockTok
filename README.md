@@ -32,7 +32,7 @@ The application is deployed and accessible at:
    <image>
 
 3. **Create and Manage Watchlists**
-   - Create a new watchlist from the dashboard
+   - Create a new watchlist from the dashboard `/dashboard`
    - Add stock tickers to your watchlist
 
 
