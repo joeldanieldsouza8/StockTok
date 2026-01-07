@@ -4,7 +4,6 @@ Stocktok is a social stock analysis platform that uses the microservices archite
 
 ## Architecture
 
-https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/architecture.jpg
 ![alt text](https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/architecture.jpg "StockTok Architecture")
 
 ## Getting Started
