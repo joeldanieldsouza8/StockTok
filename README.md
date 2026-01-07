@@ -61,6 +61,22 @@ Please be aware of the following minor issues:
 
 - **Random Sign-Outs:** Users may be signed out randomly. If this occurs, simply sign back in using the same Gmail account.
 - **Non-Functional Buttons:** Some buttons such as "Community" and "Docs" may not be fully functional. Note that the community features are accessible through the social feed pages (`/feed/[ticker]`).
+- If you have used the app before, your profile may be CACHED so please SIGN OUT and sign back in
+
+
+### Tech Stack
+- .NET (C#) for backend
+- FASTAPI (Python) for backend\
+- YARP gateway for handling request routing to different services
+- Nginx
+- PostgreSQL
+- Auth0
+- TypeScript
+- NextJS
+
+### APIs
+- Yahoo Finance API (market data for tickers)
+- MarketAux API (news for tickers)
 
 
 ### Developers
