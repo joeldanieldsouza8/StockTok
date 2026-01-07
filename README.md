@@ -85,7 +85,7 @@ Please be aware of the following minor issues:
 - Said Ait Ennecer (Full Stack Developer, Report Lead)
 - Rita San (Full Stack Developer)
 - Eyad Cherifi (Full Stack Developer)
-- Steven Thomas (Full Stack Developer)
+- Steven Thomas (Technical Lead, Full Stack Developer)
 - Zayaan K. Khan (Technical Lead, Full Stack Developer)
 
 ---
