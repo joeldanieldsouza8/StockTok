@@ -45,7 +45,7 @@ The application is deployed and accessible at:
    - Alternatively, navigate to `/feed/[ticker]`
    - Create posts about stocks you're tracking
    - Comment on other users' posts
-   ![alt text](https://github.com/joeldanieldsouza8/StockTok/blob/master/readme-store/social.jpg "Social Posts and comments example for APPLE (AAPL)")
+
 
 ### Available Routes
 
@@ -89,6 +89,9 @@ Please be aware of the following minor issues:
 - Zayaan K. Khan (Technical Lead, Full Stack Developer)
 
 ---
+
+### Affiliations
+- This project is affiliated with University of Surrey
 
 ## License
 
