@@ -30,7 +30,7 @@ The application is deployed and accessible at:
 3. **Create and Manage Watchlists**
    - Create a new watchlist from the dashboard
    - Add stock tickers to your watchlist
-   - Click on any ticker in your watchlist to view its social feed
+   - Click on any ticker in your watchlist to view its social feed ( Alternatively, navigate to `/feed/[ticker]`)
 
 
 
@@ -57,12 +57,12 @@ Please be aware of the following minor issues:
 
 ### Developers
 
-Joel D'Souza (Full Stack Developer)
-Said Ait Ennecer (Full Stack Developer, Report Lead)
-Rita San (Full Stack Developer)
-Eyad Cherifi (Full Stack Developer)
-Steven Thomas (Full Stack Developer)
-Zayaan K. Khan (Technical Lead, Full Stack Developer)
+- Joel D'Souza (Full Stack Developer)
+- Said Ait Ennecer (Full Stack Developer, Report Lead)
+- Rita San (Full Stack Developer)
+- Eyad Cherifi (Full Stack Developer)
+- Steven Thomas (Full Stack Developer)
+- Zayaan K. Khan (Technical Lead, Full Stack Developer)
 
 ---
 
